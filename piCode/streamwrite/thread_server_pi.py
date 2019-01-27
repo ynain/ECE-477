@@ -94,7 +94,7 @@ try:
 
 finally:
     connection.close()
-    client_socket.close()
+    server_socket.close()
 
 print('Sent %d images in %d seconds at %.2ffps' % (
     count, finish-start, count / (finish-start)))

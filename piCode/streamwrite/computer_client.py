@@ -13,6 +13,9 @@ import numpy as np
 client_socket = socket.socket()
 client_socket.connect(('128.46.96.231', 8000))
 connection = client_socket.makefile('rb')
+
+count = 0
+
 try:
     while True:
         # Read the length of the image as a 32-bit unsigned int. If the
@@ -34,4 +37,4 @@ try:
 finally:
     print("{} images received".format(count))
     connection.close()
-    server_socket.close()
+    client_socket.close()
