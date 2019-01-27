@@ -1,19 +1,18 @@
+"""
+    This file found and edited from documentation for picamera
+    https://picamera.readthedocs.io/en/release-1.10/recipes2.html?highlight=socket#rapid-capture-and-streaming
+"""
+
 import io
 import socket
 import struct
 import cv2
 import numpy as np
 
-# Start a socket listening for connections on 0.0.0.0:8000 (0.0.0.0 means
-# all interfaces)
-server_socket = socket.socket()
-server_socket.bind(('0.0.0.0', 8000))
-server_socket.listen(0)
-
-count = 0
-
-# Accept a single connection and make a file-like object out of it
-connection = server_socket.accept()[0].makefile('rb')
+# Make a socket connection that can be written to
+client_socket = socket.socket()
+client_socket.connect(('128.46.96.231', 8000))
+connection = client_socket.makefile('rb')
 try:
     while True:
         # Read the length of the image as a 32-bit unsigned int. If the

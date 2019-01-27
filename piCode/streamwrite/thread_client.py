@@ -1,3 +1,8 @@
+"""
+    This file found and edited from documentation for picamera
+    https://picamera.readthedocs.io/en/release-1.10/recipes2.html?highlight=socket#rapid-capture-and-streaming
+"""
+
 import io
 import socket
 import struct
@@ -5,9 +10,17 @@ import time
 import threading
 import picamera
 
-client_socket = socket.socket()
-client_socket.connect(('128.46.96.231', 8000))
-connection = client_socket.makefile('wb')
+
+# Start a socket listening for connections on 0.0.0.0:8000 (0.0.0.0 means
+# all interfaces)
+server_socket = socket.socket()
+server_socket.bind(('0.0.0.0', 8000))
+server_socket.listen(0)
+
+# Accept a single connection and make a file-like object out of it
+conn, addr = server_socket.accept()
+connection = conn.makefile('wb')
+
 try:
     connection_lock = threading.Lock()
     pool_lock = threading.Lock()
