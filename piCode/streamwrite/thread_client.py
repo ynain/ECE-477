@@ -6,7 +6,7 @@ import threading
 import picamera
 
 client_socket = socket.socket()
-client_socket.connect(('spider', 8000))
+client_socket.connect(('128.46.96.231', 8000))
 connection = client_socket.makefile('wb')
 try:
     connection_lock = threading.Lock()
@@ -25,7 +25,7 @@ try:
             # This method runs in a background thread
             while not self.terminated:
                 # Wait for the image to be written to the stream
-                if self.event.wait(1):
+                if self.event.wait(.5):
                     try:
                         with connection_lock:
                             connection.write(struct.pack('<L', self.stream.tell()))
@@ -45,7 +45,7 @@ try:
 
     def streams():
         global count, finish
-        while finish - start < 30:
+        while finish - start < 2:
             with pool_lock:
                 if pool:
                     streamer = pool.pop()
@@ -63,8 +63,8 @@ try:
     with picamera.PiCamera() as camera:
         pool = [ImageStreamer() for i in range(4)]
         camera.resolution = (640, 480)
-        camera.framerate = 30
-        time.sleep(2)
+        camera.framerate = 4.4 
+        time.sleep(1)
         start = time.time()
         camera.capture_sequence(streams(), 'jpeg', use_video_port=True)
 

@@ -10,6 +10,8 @@ server_socket = socket.socket()
 server_socket.bind(('0.0.0.0', 8000))
 server_socket.listen(0)
 
+count = 0
+
 # Accept a single connection and make a file-like object out of it
 connection = server_socket.accept()[0].makefile('rb')
 try:
@@ -28,7 +30,9 @@ try:
         image_stream.seek(0)
         image = cv2.imdecode(np.asarray(bytearray(image_stream.read()), dtype=np.uint8), cv2.IMREAD_COLOR)
 
-        print('Image is %dx%d' % image.shape[0:2])
+        # print('Image is %dx%d' % image.shape[0:2])
+        count += 1
 finally:
+    print("{} images received".format(count))
     connection.close()
     server_socket.close()
