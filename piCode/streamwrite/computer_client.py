@@ -15,6 +15,7 @@ client_socket.connect(('128.46.96.231', 8000))
 connection = client_socket.makefile('rb')
 
 count = 0
+images = []
 
 try:
     while True:
@@ -30,7 +31,7 @@ try:
         # Rewind the stream, open it as an image with PIL and do some
         # processing on it
         image_stream.seek(0)
-        image = cv2.imdecode(np.asarray(bytearray(image_stream.read()), dtype=np.uint8), cv2.IMREAD_COLOR)
+        images.append(cv2.imdecode(np.asarray(bytearray(image_stream.read()), dtype=np.uint8), cv2.IMREAD_COLOR))
 
         # print('Image is %dx%d' % image.shape[0:2])
         count += 1
@@ -38,3 +39,7 @@ finally:
     print("{} images received".format(count))
     connection.close()
     client_socket.close()
+
+    for i in range(len(images)):
+        cv2.imwrite("frames/frame{}.jpg".format(i), images[i])
+    print("Images saved")
