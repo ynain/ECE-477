@@ -1,6 +1,9 @@
 """
     This file found and edited from documentation for picamera
     https://picamera.readthedocs.io/en/release-1.10/recipes2.html?highlight=socket#rapid-capture-and-streaming
+
+    Pi wifi-hotspot enabled via hostapd and RaspAP
+    https://howtoraspberrypi.com/create-a-wi-fi-hotspot-in-less-than-10-minutes-with-pi-raspberry/
 """
 
 import io
