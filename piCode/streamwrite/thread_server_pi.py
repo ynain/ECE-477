@@ -100,7 +100,7 @@ class connectToClient():
 
             # Load the camera and run the streaming process
             with picamera.PiCamera() as camera:
-                pool = [ImageStreamer(self.pool, self.pool_lock, self.connection_lock, self.connection) for i in range(4)]
+                self.pool = [ImageStreamer(self.pool, self.pool_lock, self.connection_lock, self.connection) for _ in range(4)]
                 camera.resolution = (640, 480)
                 camera.framerate = self.framerate 
                 time.sleep(1)
