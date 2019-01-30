@@ -24,14 +24,11 @@ try:
         image_len = struct.unpack('<L', connection.read(struct.calcsize('<L')))[0]
         if not image_len:
             break
-        # Construct a stream to hold the image data and read the image
-        # data from the connection
-        image_stream = io.BytesIO()
-        image_stream.write(connection.read(image_len))
-        # Rewind the stream, open it as an image with PIL and do some
-        # processing on it
-        image_stream.seek(0)
-        images.append(cv2.imdecode(np.asarray(bytearray(image_stream.read()), dtype=np.uint8), cv2.IMREAD_COLOR))
+        # Read the image data from the connection
+        # Open it as an image with OpenCV and do some processing on it
+        imagemaybe = connection.read(image_len)
+        
+        images.append(cv2.imdecode(np.asarray(bytearray(imagemaybe), dtype=np.uint8), cv2.IMREAD_COLOR))
 
         # print('Image is %dx%d' % image.shape[0:2])
         count += 1

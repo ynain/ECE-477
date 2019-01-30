@@ -1,3 +1,4 @@
-**/frames/*.jpg
-**/frames/*.jpeg
-**/frames/*.png
+**/frames/*
+**/frames/*/
+
+!**/README.md
