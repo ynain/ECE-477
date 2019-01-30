@@ -57,7 +57,7 @@ class connectToClient():
         self.server_socket.listen(0)
 
         # Accept a single connection and make a file-like object out of it
-        self.conn, self.addr = server_socket.accept()
+        self.conn, self.addr = self.server_socket.accept()
         self.connection = self.conn.makefile('wb')
 
         # Initialize blank variables for later
