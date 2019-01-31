@@ -31,7 +31,7 @@ try:
         # Rewind the stream, open it as an image with PIL and do some
         # processing on it
         image_stream.seek(0)
-        images.append(cv2.imdecode(np.asarray(bytearray(image_stream.read()), dtype=np.uint8), cv2.IMREAD_COLOR))
+        images.append(cv2.imdecode(np.asarray(bytearray(image_stream.read(image_len)), dtype=np.uint8), cv2.IMREAD_COLOR))
 
         # print('Image is %dx%d' % image.shape[0:2])
         count += 1
