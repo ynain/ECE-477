@@ -91,7 +91,7 @@ def runConnect():
             camera.framerate = 4.4 
             time.sleep(1)
             start = time.time()
-            camera.capture_sequence(streams(measure), 'jpeg', use_video_port=True)
+            camera.capture_sequence(streams(measure, pool, pool_lock), 'jpeg', use_video_port=True)
 
         # Shut down the streamers in an orderly fashion
         while close:
@@ -109,7 +109,7 @@ def runConnect():
         server_socket.close()
 
     print('Sent %d images in %d seconds at %.2ffps' % (
-        count, finish-start, count / (finish-start)))
+        measure['count'], measure['finish']-measure['start'], measure['count'] / (measure['finish']-measure['start'])))
 
 if __name__ == "__main__":
     runConnect()
