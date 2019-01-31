@@ -36,8 +36,6 @@ class writeSingleImage():
         connection.write(struct.pack('<L', 0))
 
 def frameGenerator(connection, frame, sender, time=2):
-    frame = 0
-
     while frame['finish'] - frame['start'] < 2:
         yield sender
         frame["count"] += 1
