@@ -15,12 +15,17 @@ import threading
 import picamera
 
 class ImageStreamer(threading.Thread):
-    def __init__(self):
+    def __init__(self, pool, connection, connection_lock, pool_lock):
         super(ImageStreamer, self).__init__()
         self.stream = io.BytesIO()
         self.event = threading.Event()
         self.terminated = False
         self.start()
+
+        self.pool = pool
+        self.connection = connection
+        self.connection_lock = connection_lock
+        self.pool_lock = pool_lock
 
     def run(self):
         # This method runs in a background thread
@@ -40,9 +45,8 @@ class ImageStreamer(threading.Thread):
                     with pool_lock:
                         pool.append(self)
 
-def streams():
-    global count, finish
-    while finish - start < 2:
+def streams(measure, pool, pool_lock):
+    while measure['finish'] - measure['start'] < 2:
         with pool_lock:
             if pool:
                 streamer = pool.pop()
@@ -51,11 +55,12 @@ def streams():
         if streamer:
             yield streamer.stream
             streamer.event.set()
-            count += 1
+            measure['count'] += 1
         else:
             # When the pool is starved, wait a while for it to refill
             time.sleep(0.1)
-        finish = time.time()
+        measure['finish'] = time.time()
+
 def runConnect():
     # Start a socket listening for connections on 0.0.0.0:8000 (0.0.0.0 means
     # all interfaces)
@@ -73,17 +78,20 @@ def runConnect():
         pool = []
 
         count = 0
-        start = time.time()
-        finish = time.time()
+        measure = {
+            'start': time.time(),
+            'finish': time.time(),
+            'count': 0
+        }
 
         with picamera.PiCamera() as camera:
-            pool = [ImageStreamer() for i in range(4)]
+            pool = [ImageStreamer(pool, connection, connection_lock, pool_lock) for i in range(4)]
             close = copy.copy(pool)
             camera.resolution = (640, 480)
             camera.framerate = 4.4 
             time.sleep(1)
             start = time.time()
-            camera.capture_sequence(streams(), 'jpeg', use_video_port=True)
+            camera.capture_sequence(streams(measure), 'jpeg', use_video_port=True)
 
         # Shut down the streamers in an orderly fashion
         while close:
