@@ -12,14 +12,15 @@ import struct
 import time
 import threading
 import picamera
+import copy
 
 class ImageStreamer(threading.Thread):
-    def __init__(self, pool, pool_lock, connection_lock, connection):
+    def __init__(self, pool, pool_lock, connection_lock, connection, num):
         super(ImageStreamer, self).__init__()
         self.stream = io.BytesIO()
         self.event = threading.Event()
         self.terminated = False
-        self.start()
+        self.num = num
 
         # Initializing shared variables (shallow copies... hopefully. Fingers crossed)
         self.pool = pool
@@ -27,9 +28,12 @@ class ImageStreamer(threading.Thread):
         self.connection_lock = connection_lock
         self.connection = connection
 
+        self.start()
+
     def run(self):
         # This method runs in a background thread
         while not self.terminated:
+            print("Thread {} alive".format(self.num))
             # Wait for the image to be written to the stream
             if self.event.wait(.5):
                 try:
@@ -42,7 +46,7 @@ class ImageStreamer(threading.Thread):
                     self.stream.seek(0)
                     self.stream.truncate()
                     self.event.clear()
-                    with pool_lock:
+                    with self.pool_lock:
                         self.pool.append(self)
 
 class connectToClient():
@@ -100,7 +104,8 @@ class connectToClient():
 
             # Load the camera and run the streaming process
             with picamera.PiCamera() as camera:
-                self.pool = [ImageStreamer(self.pool, self.pool_lock, self.connection_lock, self.connection) for _ in range(4)]
+                self.pool = [ImageStreamer(self.pool, self.pool_lock, self.connection_lock, self.connection, i) for i in range(4)]
+                close_pool = copy.copy(self.pool)
                 camera.resolution = (640, 480)
                 camera.framerate = self.framerate 
                 time.sleep(1)
@@ -108,11 +113,13 @@ class connectToClient():
                 camera.capture_sequence(self.streams(), 'jpeg', use_video_port=True)
 
             # Shut down the streamers in an orderly fashion
-            while self.pool:
-                streamer = self.pool.pop()
+            while close_pool:
+                streamer = close_pool.pop()
+                print("Popped streamer {}".format(streamer.num))
                 streamer.terminated = True
                 streamer.join()
 
+            print("All should be closed")
             # Write the terminating 0-length to the connection to let the server
             # know we're done
             with self.connection_lock:
