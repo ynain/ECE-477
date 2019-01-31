@@ -14,52 +14,34 @@ import time
 import threading
 import picamera
 
-class ImageStreamer(threading.Thread):
-    def __init__(self, pool, connection, connection_lock, pool_lock):
-        super(ImageStreamer, self).__init__()
+class writeSingleImage():
+    def __init__(self, connection):
         self.stream = io.BytesIO()
-        self.event = threading.Event()
-        self.terminated = False
-        self.start()
-
-        self.pool = pool
         self.connection = connection
-        self.connection_lock = connection_lock
-        self.pool_lock = pool_lock
+    
+    def write(self, sendStuff):
+        print(sendStuff)
+        try:
+            self.stream.write(sendStuff)
+            connection.write(struct.pack('<L', self.stream.tell()))
+            connection.flush()
+            
+            self.stream.seek(0)
+            connection.write(self.stream.read())
+        finally:
+            self.stream.seek(0)
+            self.stream.truncate()
+    
+    def end(self):
+        connection.write(struct.pack('<L', 0))
 
-    def run(self):
-        # This method runs in a background thread
-        while not self.terminated:
-            # Wait for the image to be written to the stream
-            if self.event.wait(.5):
-                try:
-                    with connection_lock:
-                        connection.write(struct.pack('<L', self.stream.tell()))
-                        connection.flush()
-                        self.stream.seek(0)
-                        connection.write(self.stream.read())
-                finally:
-                    self.stream.seek(0)
-                    self.stream.truncate()
-                    self.event.clear()
-                    with pool_lock:
-                        pool.append(self)
+def frameGenerator(connection, frame, sender, time=2):
+    frame = 0
 
-def streams(measure, pool, pool_lock):
-    while measure['finish'] - measure['start'] < 2:
-        with pool_lock:
-            if pool:
-                streamer = pool.pop()
-            else:
-                streamer = None
-        if streamer:
-            yield streamer.stream
-            streamer.event.set()
-            measure['count'] += 1
-        else:
-            # When the pool is starved, wait a while for it to refill
-            time.sleep(0.1)
-        measure['finish'] = time.time()
+    while frame['finish'] - frame['start'] < 2:
+        yield sender
+        frame["count"] += 1
+        frame['finish'] = time.time()
 
 def runConnect():
     # Start a socket listening for connections on 0.0.0.0:8000 (0.0.0.0 means
@@ -73,36 +55,23 @@ def runConnect():
     connection = conn.makefile('wb')
 
     try:
-        connection_lock = threading.Lock()
-        pool_lock = threading.Lock()
-        pool = []
-
-        count = 0
         measure = {
             'start': time.time(),
             'finish': time.time(),
             'count': 0
         }
 
+        sender = writeSingleImage(connection)
+
         with picamera.PiCamera() as camera:
-            pool = [ImageStreamer(pool, connection, connection_lock, pool_lock) for i in range(4)]
-            close = copy.copy(pool)
             camera.resolution = (640, 480)
             camera.framerate = 4.4 
             time.sleep(1)
-            start = time.time()
-            camera.capture_sequence(streams(measure, pool, pool_lock), 'jpeg', use_video_port=True)
-
-        # Shut down the streamers in an orderly fashion
-        while close:
-            streamer = close.pop()
-            streamer.terminated = True
-            streamer.join()
+            camera.capture_sequence(frameGenerator(connection, measure, sender), 'jpeg', use_video_port=True)
 
         # Write the terminating 0-length to the connection to let the server
         # know we're done
-        with connection_lock:
-            connection.write(struct.pack('<L', 0))
+        sender.end()
 
     finally:
         connection.close()
