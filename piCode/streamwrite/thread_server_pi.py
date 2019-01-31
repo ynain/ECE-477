@@ -23,8 +23,8 @@ class writeSingleImage():
         print(sendStuff)
         try:
             self.stream.write(sendStuff)
-            connection.write(struct.pack('<L', self.stream.tell()))
-            connection.flush()
+            self.connection.write(struct.pack('<L', self.stream.tell()))
+            self.connection.flush()
             
             self.stream.seek(0)
             connection.write(self.stream.read())
@@ -33,7 +33,7 @@ class writeSingleImage():
             self.stream.truncate()
     
     def end(self):
-        connection.write(struct.pack('<L', 0))
+        self.connection.write(struct.pack('<L', 0))
 
 def frameGenerator(connection, frame, sender, time=2):
     while frame['finish'] - frame['start'] < 2:
@@ -52,12 +52,13 @@ def runConnect():
     conn, addr = server_socket.accept()
     connection = conn.makefile('wb')
 
+    measure = {
+        'start': time.time(),
+        'finish': time.time(),
+        'count': 0
+    }
+
     try:
-        measure = {
-            'start': time.time(),
-            'finish': time.time(),
-            'count': 0
-        }
 
         sender = writeSingleImage(connection)
 
