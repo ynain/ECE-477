@@ -33,17 +33,17 @@ class ImageStreamer(threading.Thread):
             # Wait for the image to be written to the stream
             if self.event.wait(.5):
                 try:
-                    with connection_lock:
-                        connection.write(struct.pack('<L', self.stream.tell()))
-                        connection.flush()
+                    with self.connection_lock:
+                        self.connection.write(struct.pack('<L', self.stream.tell()))
+                        self.connection.flush()
                         self.stream.seek(0)
-                        connection.write(self.stream.read())
+                        self.connection.write(self.stream.read())
                 finally:
                     self.stream.seek(0)
                     self.stream.truncate()
                     self.event.clear()
-                    with pool_lock:
-                        pool.append(self)
+                    with self.pool_lock:
+                        self.pool.append(self)
 
 def streams(measure, pool, pool_lock):
     while measure['finish'] - measure['start'] < 2:
