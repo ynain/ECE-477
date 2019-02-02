@@ -1,10 +1,21 @@
 face
 .vscode
 
-MAC OS generated files #
+# MAC OS generated files #
 ######################
 .DS_Store?
 ehthumbs.db
 Icon?
 Thumbs.db
 *.DS_Store
+
+# Ignoring downloaded files #
+**/frames/*
+**/frames/*/
+
+!**/README.md
+
+# ignoring images til testing is over #
+aligned_images
+input_images
+myclassifier
