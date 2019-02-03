@@ -9,16 +9,19 @@ import struct
 import cv2
 import numpy as np
 
-def getImages(server_socket=None, ipaddress='0.0.0.0', port='8000'):
-    if server_socket is None:
+def getImages(connect=None, ipaddress='0.0.0.0', port='8000'):
+    if connect is None:
+        # Make a socket connection that can be written to
         server_socket = socket.socket()
         server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         server_socket.bind((ipaddress, port))
         server_socket.listen(0)
 
-    # Accept a single connection and make a file-like object out of it
-    conn, addr = server_socket.accept()
-    connection = conn.makefile('wb')
+        # Accept a single connection and make a file-like object out of it
+        conn, addr = server_socket.accept()
+        connect = conn.makefile('rb')
+    
+    connection = connect    # Unify paths
 
     print("connected")
 
@@ -45,20 +48,30 @@ def getImages(server_socket=None, ipaddress='0.0.0.0', port='8000'):
             count += 1
     finally:
         print("{} images received".format(count))
-        connection.close()
-        server_socket.close()
 
         for i in range(len(images)):
             cv2.imwrite("frames/frame{}.jpg".format(i), images[i])
         print("Images saved")
 
+        if connect is None: # If the connection was made internally, close all
+            connection.close()
+            conn.close()
+            server_socket.close()
+
 
 if __name__ == "__main__":
-
     # Make a socket connection that can be written to
     server_socket = socket.socket()
     server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server_socket.bind(('0.0.0.0', 8000))
     server_socket.listen(0)
 
-    getImages(server_socket=server_socket)
+    # Accept a single connection and make a file-like object out of it
+    conn, addr = server_socket.accept()
+    connect = conn.makefile('rb')
+
+    getImages(connect=connect)
+
+    connect.close()
+    conn.close()
+    server_socket.close()
