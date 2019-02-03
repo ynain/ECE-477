@@ -1,9 +1,18 @@
 #!/usr/bin/env python3
 
 import os
+import sys
 import socket
 import shutil
 
+# Project is built using Python 3.5+, please comply
+if sys.version_info[0] < 3:
+    sys.exit('''Project is built using Python 3.5+\n'''
+             '''Please comply or this won't work properly'''
+             )
+
+
+# Imports specific to Pi or Not Pi
 compsystem = os.uname()
 OnPi = compsystem.nodename == 'raspberrypi'
 
@@ -79,6 +88,8 @@ def runPi():
     while command != 'quit':
         try:
             pi.runConnect(client_socket=client_socket)
+        except Exception as e:
+            print(e)
         finally:
             command = input("Type 'quit' to exit this process\n")
 
