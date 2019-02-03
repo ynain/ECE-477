@@ -1,2 +1,32 @@
-import teststart from facenet_trials as fn
-import streamwrite from piCode as pistream
+#!/usr/bin/env python3
+
+import os
+
+compsystem = os.uname()
+OnPi = compsystem.nodename == 'raspberrypi'
+
+from facenet_trials import teststart as fn
+if OnPi:
+    from piCode.streamwrite import pi_client as pi
+else:
+    from piCode.streamwrite import computer_server as comp
+
+
+def runStuff():
+    compsystem = os.uname()
+    
+    if OnPi:
+        runPi()
+    else:
+        runComp()
+
+    return compsystem.nodename
+
+def runComp():
+    print("Ready and waiting")
+
+def runPi():
+    print("I'm a Pi Pie Phi guy")
+
+if __name__ == "__main__":
+    print(runStuff())
