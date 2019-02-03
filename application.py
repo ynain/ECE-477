@@ -7,10 +7,10 @@ import shutil
 compsystem = os.uname()
 OnPi = compsystem.nodename == 'raspberrypi'
 
-from facenet_trials import teststart as fn
 if OnPi:
     from piCode.streamwrite import pi_client as pi
 else:
+    from facenet_trials import teststart as fn
     from piCode.streamwrite import computer_server as comp
 
 
