@@ -4,12 +4,13 @@
 """
 
 import io
+import os
 import socket
 import struct
 import cv2
 import numpy as np
 
-def getImages(connect=None, ipaddress='0.0.0.0', port='8000'):
+def getImages(connect=None, path='./frames/', ipaddress='0.0.0.0', port='8000'):
     if connect is None:
         # Make a socket connection that can be written to
         server_socket = socket.socket()
@@ -50,7 +51,9 @@ def getImages(connect=None, ipaddress='0.0.0.0', port='8000'):
         print("{} images received".format(count))
 
         for i in range(len(images)):
-            cv2.imwrite("frames/frame{}.jpg".format(i), images[i])
+            imgname = os.path.join(path,"frame{}.jpg".format(i))
+            cv2.imwrite(imgname, images[i])
+            print(imgname)
         print("Images saved")
 
         if connect is None: # If the connection was made internally, close all
