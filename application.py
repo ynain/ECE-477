@@ -78,9 +78,9 @@ def runPi():
     command = ''
     while command != 'quit':
         try:
-            runConnect(client_socket=client_socket)
+            pi.runConnect(client_socket=client_socket)
         finally:
-            command = input("Type 'quit' to exit this process")
+            command = input("Type 'quit' to exit this process\n")
 
     client_socket.close()
 
