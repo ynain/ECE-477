@@ -1,38 +1,52 @@
 import facenet_recognition
-print(facenet_recognition.align_input('input_images','aligned_images'))
 
-"""
-    Train & Test Classifier on Images
-    After we have aligned images now we can train our classifier.
-"""
+def align(infaces='input_images', aligned='aligned_images'):
+    """
+        Align faces from one folder to another
+    """
+    facenet_recognition.align_input(infaces, aligned)
 
-pre_model='./pretrained/20180402-114759/20180402-114759.pb' #locaiton of pret-trained model from Facenet
-my_class ='./myclassifier/my_classifier.pkl' #location where we want to save
-test_classifier_type = 'svm' #type of model either svm or nn
-weight = './myclassifier/model_small.yaml' #local stored weights
+def testAndTrain(aligned='aligned_images', pre_model='./pretrained/20180402-114759/20180402-114759.pb', my_class='./myclassifier/my_classifier.pkl', test_classifier_type='svm', weight='./myclassifier/model_small.yaml'):
+    """
+        Train & Test Classifier on Images
+        After we have aligned images now we can train our classifier.
 
-facenet_recognition.test_train_classifier('aligned_images',pre_model,my_class,weight,test_classifier_type,nrof_train_images_per_class=30, seed=102)
+    aligned ='aligned_images'
+    pre_model='./pretrained/20180402-114759/20180402-114759.pb' #locaiton of pret-trained model from Facenet
+    my_class ='./myclassifier/my_classifier.pkl' #location where we want to save
+    test_classifier_type = 'svm' #type of model either svm or nn
+    weight= './myclassifier/model_small.yaml' #local stored weights
+    """
 
-"""
-    Train Classifer on Images (only Training)
-    This API is used to Train our Classifier on Aligned Images
-"""
+    facenet_recognition.test_train_classifier(aligned,pre_model,my_class,weight,test_classifier_type,nrof_train_images_per_class=30, seed=102)
 
-pre_model='./pretrained/20180402-114759/20180402-114759.pb' #locaiton of pret-trained model from Facenet
-my_class ='./myclassifier/my_classifier.pkl' #location where we want to save
-test_classifier_type = 'svm' #type of model either svm or nn
-weight= './myclassifier/model_small.yaml' #local stored weights
+def trainClass(aligned='aligned_images', pre_model='./pretrained/20180402-114759/20180402-114759.pb', my_class='./myclassifier/my_classifier.pkl', test_classifier_type='svm', weight='./myclassifier/model_small.yaml'):
+    """
+        Train Classifer on Images (only Training)
+        This API is used to Train our Classifier on Aligned Images
 
-facenet_recognition.create_classifier('aligned_images',pre_model,my_class,weight,test_classifier_type)
+    aligned ='aligned_images'
+    pre_model='./pretrained/20180402-114759/20180402-114759.pb' #locaiton of pret-trained model from Facenet
+    my_class ='./myclassifier/my_classifier.pkl' #location where we want to save
+    test_classifier_type = 'svm' #type of model either svm or nn
+    weight= './myclassifier/model_small.yaml' #local stored weights
+    """
 
-"""
-    Test Classifer on Images
-    This API is used to test our Trained Classifer
-"""
+    facenet_recognition.create_classifier(aligned,pre_model,my_class,weight,test_classifier_type)
 
-pre_model='./pretrained/20180402-114759/20180402-114759.pb' #locaiton of pret-trained model from Facenet
-my_class ='./myclassifier/my_classifier.pkl' #location where we want to save
-test_classifier_type = 'svm' #type of model either svm or nn
-weight= './myclassifier/model_small.yaml' #local stored weights
+def testClass(aligned='aligned_images', pre_model='./pretrained/20180402-114759/20180402-114759.pb', my_class='./myclassifier/my_classifier.pkl', test_classifier_type='svm', weight='./myclassifier/model_small.yaml'):
+    """
+        Test Classifer on Images
+        This API is used to test our Trained Classifer
 
-facenet_recognition.test_classifier('aligned_images',pre_model,my_class,weight,test_classifier_type)
+    aligned ='aligned_images'
+    pre_model='./pretrained/20180402-114759/20180402-114759.pb' #locaiton of pret-trained model from Facenet
+    my_class ='./myclassifier/my_classifier.pkl' #location where we want to save
+    test_classifier_type = 'svm' #type of model either svm or nn
+    weight= './myclassifier/model_small.yaml' #local stored weights
+    """
+
+    facenet_recognition.test_classifier(aligned,pre_model,my_class,weight,test_classifier_type)
+
+if __name__ == "__main__":
+    testClass(aligned='runface')

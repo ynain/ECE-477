@@ -19,3 +19,7 @@ Thumbs.db
 aligned_images
 input_images
 myclassifier
+runface
+
+# Python testing files? #
+__pycache__

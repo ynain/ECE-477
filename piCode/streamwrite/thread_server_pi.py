@@ -41,17 +41,15 @@ def frameGenerator(connection, frame, sender, captureTime=2):
         frame["count"] += 1
         frame['finish'] = time.time()
 
-def runConnect():
-    # Start a socket listening for connections on 0.0.0.0:8000 (0.0.0.0 means
-    # all interfaces)
-    server_socket = socket.socket()
-    server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    server_socket.bind(('0.0.0.0', 8000))
-    server_socket.listen(0)
+def runConnect(client_socket=None, ipaddress='10.3.141.1', port='8000'):
+    if client_socket is None:
+        # Start a socket listening for connections on 0.0.0.0:8000 (0.0.0.0 means
+        # all interfaces)
+        client_socket = socket.socket()
 
-    # Accept a single connection and make a file-like object out of it
-    conn, addr = server_socket.accept()
-    connection = conn.makefile('wb')
+    # Instigate a single connection and make a file-like object out of it
+    client_socket.connect((ipaddress, port))
+    connection = client_socket.makefile('rb')
 
     measure = {
         'start': time.time(),
@@ -75,11 +73,13 @@ def runConnect():
 
     finally:
         connection.close()
-        server_socket.close()
+        client_socket.close()
         conn.close()
 
     print('Sent %d images in %d seconds at %.2ffps' % (
         measure['count'], measure['finish']-measure['start'], measure['count'] / (measure['finish']-measure['start'])))
 
 if __name__ == "__main__":
-    runConnect()
+    client_socket = socket.socket()
+
+    runConnect(client_socket=client_socket)
