@@ -71,7 +71,10 @@ def compareListToKnown(inlist, compknown=None, encode_path="known_faces"):
         for el in inlist:
             temp.extend(fr.compare_faces(compknown[person], el))
 
-        res[person] = temp.count(True) / len(temp)
+        if len(temp):
+            res[person] = temp.count(True) / len(temp)
+        else:
+            res[person] = None
 
     return res
 
