@@ -1,6 +1,3 @@
-face
-.vscode
-
 # MAC OS generated files #
 ######################
 .DS_Store?
@@ -18,8 +15,14 @@ Thumbs.db
 # ignoring images til testing is over #
 aligned_images
 input_images
+known_faces
 myclassifier
 runface
+
+# virtual environment and VS code items #
+face
+nonet
+.vscode
 
 # Python testing files? #
 __pycache__
