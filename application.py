@@ -19,7 +19,7 @@ OnPi = compsystem.nodename == 'raspberrypi'
 if OnPi:
     from piCode.streamwrite import pi_client as pi
 else:
-    from facenet_trials import teststart as fn
+    from alt_trials import mapfaceEncodings as facecomp
     from piCode.streamwrite import computer_server as comp
 
 
@@ -37,20 +37,14 @@ def runComp(path="./facenet_trials/runface/", alignface="./facenet_trials/aligne
     framepath = os.path.join(os.getcwd(), os.path.join(path, 'frames/'))
     path = os.path.join(os.getcwd(), path)
     alignface = os.path.join(os.getcwd(), alignface)
+
+    known = facecomp.readFaceEncodings(encode_path="./alt_trials/known_faces/")
     
     # Make a socket connection that can be written to
     server_socket = socket.socket()
     server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server_socket.bind(('0.0.0.0', 8000))
     server_socket.listen(0)
-    
-    for el in [framepath, alignface]:
-        try:
-            shutil.rmtree(el)
-        except Exception as e:
-            print(e)
-        finally:
-            os.makedirs(el)
 
     print("Computer server running")
 
@@ -59,20 +53,13 @@ def runComp(path="./facenet_trials/runface/", alignface="./facenet_trials/aligne
     connect = conn.makefile('rb')
 
     # Run as a server and allow for face images to be downloaded
-    comp.getImages(connect=connect, path=framepath)
+    images = comp.getImages(connect=connect, path=framepath)
     
-    # Align faces and then run face recognition on them
-    fn.align(infaces=path, aligned=alignface)
+    img_feats = facecomp.turnImagesToFeats(images)
 
-    # Check that faces were able to be found
-    found = os.listdir(os.path.join(alignface, "frames/"))
+    res = facecomp.compareListToKnown(img_feats, compknown=known)
 
-    if len(found):
-        # If faces found, classify them
-        fn.testClass(aligned=alignface)
-    else:
-        print("Face acquisition failed, try again")
-    print(found)
+    print(res)
 
     connect.close()
     conn.close()

@@ -73,6 +73,7 @@ def runConnect(client_socket=None, ipaddress='10.3.141.198', port=8000):
 
     finally:
         connection.close()
+        client_socket.close()
 
     print('Sent %d images in %d seconds at %.2ffps' % (
         measure['count'], measure['finish']-measure['start'], measure['count'] / (measure['finish']-measure['start'])))

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import face_recognition
+import face_recognition as fr
 import numpy as np
 import json
 import cv2
@@ -8,7 +8,7 @@ import os
 
 # Use the area of the bounding box as the "largest face" finder
 def largestFaceIndex(face):
-    face_locations = face_recognition.face_locations(frame)
+    face_locations = fr.face_locations(frame)
     area = []
 
     for top, right, bottom, left in face_locations:
@@ -17,7 +17,7 @@ def largestFaceIndex(face):
     return area.index(max(area))
 
 # Assumes subfolders with names of subjects
-def getFaceEncodings(folderName="input_images", outName="known_faces"):
+def getFaceEncodings(folderName="input_images"):
     res = {}
 
     for person in os.listdir(folderName):
@@ -25,21 +25,13 @@ def getFaceEncodings(folderName="input_images", outName="known_faces"):
         if os.path.isdir(curpath):
             res[person] = []    # Encodings for each person will be saved in a list
 
+            # Ignore the self generated .npz filess
+            names = []
             for image in os.listdir(curpath):
-                frame = face_recognition.load_image_file(os.path.join(curpath, image))
+                if not image.endswith(".npz"):
+                    names.append(fr.load_image_file(os.path.join(curpath, image)))
 
-                # Find face encodings
-                face_encodings = face_recognition.face_encodings(frame)
-                index = 0
-
-                # Find the one with the most area (i.e. "biggest")
-                if len(face_encodings) > 1:
-                    index = largestFaceIndex(frame)
-                
-                # Append the biggest/only face encoding, if available
-                if len(face_encodings) > 0:
-                    res[person].append(face_encodings[index])
-
+            res[person].extend(turnImagesToFeats(names))
 
         else:
             print("{} isn't a directory...".format(person))
@@ -52,6 +44,7 @@ def writeFaceEncodings(encoded, outName="known_faces"):
         
         np.savez_compressed(encodefile, encoded[person])
 
+# Assumes a directory with each sub directory being the name of the candidate
 def readFaceEncodings(encode_path="known_faces"):
     res = {}
 
@@ -63,13 +56,47 @@ def readFaceEncodings(encode_path="known_faces"):
 
         for fn in npzclass.files:
             res[person].extend(npzclass[fn])
+    
+    return res
+
+# Compares a list of features against a list of known vectors
+def compareListToKnown(inlist, compknown=None, encode_path="known_faces"):
+    if compknown is None:
+        compknown = readFaceEncodings(encode_path=encode_path)
+    
+    res = {}
+
+    for person in compknown:
+        temp = []
+        for el in inlist:
+            temp.extend(fr.compare_faces(compknown[person], el))
+
+        res[person] = temp.count(True) / len(temp)
+
+    return res
+
+# Turns images into the 128 feature list/vector
+def turnImagesToFeats(images):
+    res = []
+
+    for image in images:
+        # Find face encodings
+        face_encodings = fr.face_encodings(image)
+        index = 0
+
+        # Find the one with the most area (i.e. "biggest")
+        if len(face_encodings) > 1:
+            index = largestFaceIndex(image)
+                
+        # Append the biggest/only face encoding, if available
+        if len(face_encodings) > 0:
+            res.append(face_encodings[index])
         
-        print(type(res[person]))
-        print(res[person][0].shape)
-
-
+    return res
 
 if __name__ == "__main__":
     # res = getFaceEncodings()
     # writeFaceEncodings(res)
-    readFaceEncodings()
+    known = readFaceEncodings()
+    print(known["Ian"])
+    print(compareListToKnown(known["Ian"], known))
