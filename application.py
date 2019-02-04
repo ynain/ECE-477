@@ -67,20 +67,18 @@ def runComp(path="./facenet_trials/runface/", alignface="./facenet_trials/aligne
     server_socket.close()
 
 def runPi():
-    client_socket = socket.socket()
-
     print("Pi Pie Phi guy running")
 
     command = ''
     while command != 'quit':
         try:
+            client_socket = socket.socket()
             pi.runConnect(client_socket=client_socket)
         except Exception as e:
             print(e)
         finally:
             command = input("Type 'quit' to exit this process\n")
-
-    client_socket.close()
+            client_socket.close()
 
 if __name__ == "__main__":
     print(runStuff())
