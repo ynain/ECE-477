@@ -46,9 +46,9 @@ def runConnect(client_socket=None, ipaddress='10.3.141.198', port=8000):
         # Start a socket listening for connections on 0.0.0.0:8000 (0.0.0.0 means
         # all interfaces)
         client_socket = socket.socket()
+        client_socket.connect((ipaddress, port))
 
     # Instigate a single connection and make a file-like object out of it
-    client_socket.connect((ipaddress, port))
     connection = client_socket.makefile('wb')
 
     measure = {
@@ -74,18 +74,21 @@ def runConnect(client_socket=None, ipaddress='10.3.141.198', port=8000):
     finally:
         connection.close()
 
+        if connect is None: # If the connection was made internally, close all
+            client_socket.close()
+
     print('Sent %d images in %d seconds at %.2ffps' % (
         measure['count'], measure['finish']-measure['start'], measure['count'] / (measure['finish']-measure['start'])))
 
-def runRead(client_socket=None, ipaddress='10.3.141.198', port=8000):
-    if client_socket is None:
+def runRead(connect=None, ipaddress='10.3.141.198', port=8000):
+    if connect is None:
         # Start a socket listening for connections on 0.0.0.0:8000 (0.0.0.0 means
         # all interfaces)
         client_socket = socket.socket()
+        client_socket.connect((ipaddress, port))
 
     # Instigate a single connection and make a file-like object out of it
-    client_socket.connect((ipaddress, port))
-    connection = client_socket.makefile('rb')
+    connection = connect.makefile('rb')
 
     try:
         image_len = struct.unpack('<L', connection.read(struct.calcsize('<L')))[0]
@@ -99,6 +102,9 @@ def runRead(client_socket=None, ipaddress='10.3.141.198', port=8000):
 
     finally:
         connection.close()
+
+        if connect is None: # If the connection was made internally, close all
+            client_socket.close()
 
     print('Sent %d images in %d seconds at %.2ffps' % (
         measure['count'], measure['finish']-measure['start'], measure['count'] / (measure['finish']-measure['start'])))

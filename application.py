@@ -77,6 +77,7 @@ def runPi():
     while command != 'quit':
         try:
             client_socket = socket.socket()
+            client_socket.connect((ipaddress, port))
             pi.runConnect(client_socket=client_socket)
 
             pi.runRead(client_socket=client_socket)
