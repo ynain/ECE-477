@@ -87,7 +87,9 @@ def sendResult(jsonpackage, connect=None, ipaddress='0.0.0.0', port='8000'):
     try:
         stream = io.BytesIO()
         stream.write(json.dumps(jsonpackage, sort_keys=True).encode('utf-8'))
-
+        print(stream.tell())
+        print(struct.pack('<L', stream.tell()))
+        print(struct.unpack('<L', struct.pack('<L', stream.tell())))
         connection.write(struct.pack('<L', stream.tell()))
 
         connection.flush()
