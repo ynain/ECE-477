@@ -31,7 +31,7 @@ def getCropFaces(folderName="input_images", outName="known_faces"):
                         right += horiz_pad
 
                         # Draw a box around the face
-                        cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
+                        # cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
 
 
                         res[person].append((image, frame[top:bottom, left:right]))
