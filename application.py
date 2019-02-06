@@ -53,7 +53,7 @@ def runComp(path="./facenet_trials/runface/", alignface="./facenet_trials/aligne
     connect = conn.makefile('rb')
 
     # Run as a server and allow for face images to be downloaded
-    images = comp.getImages(connect=connect, path=framepath)
+    images = comp.getImages(connect=connect, path=framepath, ipaddress='0.0.0.0', port='8000')
     connect.close()
     
     img_feats = facecomp.turnImagesToFeats(images)
@@ -62,7 +62,7 @@ def runComp(path="./facenet_trials/runface/", alignface="./facenet_trials/aligne
 
     connect = conn.makefile('wb')
     # Connect to send results to Pi
-    comp.sendResult(res, connect=connect)
+    comp.sendResult(res, connect=connect, ipaddress='0.0.0.0', port='8000')
     connect.close()
 
     print(res)
@@ -70,7 +70,7 @@ def runComp(path="./facenet_trials/runface/", alignface="./facenet_trials/aligne
 
     server_socket.close()
 
-def runPi():
+def runPi(ipaddress='10.3.141.198', port=8000):
     print("Pi Pie Phi guy running")
 
     command = ''
@@ -78,9 +78,9 @@ def runPi():
         try:
             client_socket = socket.socket()
             client_socket.connect((ipaddress, port))
-            pi.runConnect(client_socket=client_socket)
+            pi.runConnect(client_socket=client_socket, ipaddress='10.3.141.198', port=8000)
 
-            pi.runRead(client_socket=client_socket)
+            pi.runRead(client_socket=client_socket, ipaddress='10.3.141.198', port=8000)
         except Exception as e:
             print(e)
         finally:
