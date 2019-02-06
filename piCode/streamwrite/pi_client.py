@@ -9,6 +9,7 @@
 import io
 import socket
 import struct
+import json
 import copy
 import time
 import threading
@@ -91,15 +92,13 @@ def runRead(connect=None, ipaddress='10.3.141.198', port=8000):
     connection = connect.makefile('rb')
 
     try:
-        a = connection.read()
-        print(a)
-        json_len = struct.unpack('<s', a)
+        json_len = struct.unpack('<L', connection.read(struct.calcsize('<L')))[0]
         if not json_len:
             json_len = 0
         
 
-        res = struct.unpack('<s', connection.read(json_len))
-
+        res = connection.read(json_len)
+        res = json.loads(res.decode('utf-8'))
         print(res)
 
     finally:
@@ -108,8 +107,6 @@ def runRead(connect=None, ipaddress='10.3.141.198', port=8000):
         if connect is None: # If the connection was made internally, close all
             client_socket.close()
 
-    print('Sent %d images in %d seconds at %.2ffps' % (
-        measure['count'], measure['finish']-measure['start'], measure['count'] / (measure['finish']-measure['start'])))
 
 if __name__ == "__main__":
     client_socket = socket.socket()
