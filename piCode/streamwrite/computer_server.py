@@ -65,7 +65,7 @@ def getImages(connect=None, path='./frames/', ipaddress='0.0.0.0', port='8000', 
     
     return images
 
-def sendResult(jsonpackage, connect=None, ipaddress='0.0.0.0', port='8000', printing=False):
+def sendResult(jsonpackage, connect=None, ipaddress='0.0.0.0', port='8000'):
     if connect is None:
         # Make a socket connection that can be written to
         server_socket = socket.socket()
@@ -85,32 +85,18 @@ def sendResult(jsonpackage, connect=None, ipaddress='0.0.0.0', port='8000', prin
     images = []
 
     try:
-        while True:
-            # Read the length of the image as a 32-bit unsigned int. If the
-            # length is zero, quit the loop
-            image_len = struct.unpack('<L', connection.read(struct.calcsize('<L')))[0]
-            if not image_len:
-                break
-            # Construct a stream to hold the image data and read the image
-            # data from the connection
-            image_stream = io.BytesIO()
-            image_stream.write(connection.read(image_len))
-            # Rewind the stream, open it as an image with PIL and do some
-            # processing on it
-            image_stream.seek(0)
-            images.append(cv2.imdecode(np.asarray(bytearray(image_stream.read(image_len)), dtype=np.uint8), cv2.IMREAD_COLOR))
+        stream = io.BytesIO()
+        stream.write(json.dumps(jsonpackage, indent=4, sort_keys=True))
 
-            # print('Image is %dx%d' % image.shape[0:2])
-            count += 1
+        connection.write(struct.pack('<L', self.stream.tell()))
+
+        connection.flush()
+        
+        stream.seek(0)
+        connection.write(self.stream.read())
+        
     finally:
         print("{} images received".format(count))
-
-        if printing:
-            for i in range(len(images)):
-                imgname = os.path.join(path,"frame{}.jpg".format(i))
-                cv2.imwrite(imgname, images[i])
-                print(imgname)
-            print("Images saved")
 
         if connect is None: # If the connection was made internally, close all
             connection.close()

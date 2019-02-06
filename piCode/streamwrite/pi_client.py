@@ -88,7 +88,14 @@ def runRead(client_socket=None, ipaddress='10.3.141.198', port=8000):
     connection = client_socket.makefile('rb')
 
     try:
+        image_len = struct.unpack('<L', connection.read(struct.calcsize('<L')))[0]
+        if not image_len:
+            image_len = 0
         
+
+        res = image_stream.read(image_len)
+
+        print(res)
 
     finally:
         connection.close()
