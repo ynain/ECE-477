@@ -87,7 +87,8 @@ def sendResult(jsonpackage, connect=None, ipaddress='0.0.0.0', port='8000'):
     try:
         stream = io.BytesIO()
         message = json.dumps(jsonpackage, sort_keys=True).encode('utf-8')
-        stream.write(struct.pack('<s', message))
+        print(message)
+        stream.write(message)
 
         connection.write(struct.pack('<L', stream.tell()))
 
@@ -97,7 +98,8 @@ def sendResult(jsonpackage, connect=None, ipaddress='0.0.0.0', port='8000'):
         connection.write(stream.read())
         
     finally:
-        print("{} sent".format(jsonpackage))
+        print(jsonpackage)
+        print("sent")
 
         if connect is None: # If the connection was made internally, close all
             connection.close()
