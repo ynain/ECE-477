@@ -78,9 +78,9 @@ def runPi(ipaddress='10.3.141.198', port=8000):
         try:
             client_socket = socket.socket()
             client_socket.connect((ipaddress, port))
-            pi.runConnect(client_socket=client_socket, ipaddress='10.3.141.198', port=8000)
+            pi.runConnect(connect=client_socket, ipaddress='10.3.141.198', port=8000)
 
-            pi.runRead(client_socket=client_socket, ipaddress='10.3.141.198', port=8000)
+            pi.runRead(connect=client_socket, ipaddress='10.3.141.198', port=8000)
         except Exception as e:
             print(e)
         finally:

@@ -41,15 +41,15 @@ def frameGenerator(connection, frame, sender, captureTime=2):
         frame["count"] += 1
         frame['finish'] = time.time()
 
-def runConnect(client_socket=None, ipaddress='10.3.141.198', port=8000):
-    if client_socket is None:
+def runConnect(connect=None, ipaddress='10.3.141.198', port=8000):
+    if connect is None:
         # Start a socket listening for connections on 0.0.0.0:8000 (0.0.0.0 means
         # all interfaces)
-        client_socket = socket.socket()
-        client_socket.connect((ipaddress, port))
+        connect = socket.socket()
+        connect.connect((ipaddress, port))
 
     # Instigate a single connection and make a file-like object out of it
-    connection = client_socket.makefile('wb')
+    connection = connect.makefile('wb')
 
     measure = {
         'start': time.time(),
@@ -84,19 +84,21 @@ def runRead(connect=None, ipaddress='10.3.141.198', port=8000):
     if connect is None:
         # Start a socket listening for connections on 0.0.0.0:8000 (0.0.0.0 means
         # all interfaces)
-        client_socket = socket.socket()
-        client_socket.connect((ipaddress, port))
+        connect = socket.socket()
+        connect.connect((ipaddress, port))
 
     # Instigate a single connection and make a file-like object out of it
     connection = connect.makefile('rb')
 
     try:
-        image_len = struct.unpack('<L', connection.read(struct.calcsize('<L')))[0]
-        if not image_len:
-            image_len = 0
+        a = connection.read()
+        print(a)
+        json_len = struct.unpack('<s', a)
+        if not json_len:
+            json_len = 0
         
 
-        res = struct.unpack('<s', image_stream.read(image_len))
+        res = struct.unpack('<s', connection.read(json_len))
 
         print(res)
 
