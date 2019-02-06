@@ -62,7 +62,7 @@ def runComp(path="./facenet_trials/runface/", alignface="./facenet_trials/aligne
 
     connect = conn.makefile('wb')
     # Connect to send results to Pi
-    facecomp.sendResult(res, connect=connect)
+    comp.sendResult(res, connect=connect)
     connect.close()
 
     print(res)

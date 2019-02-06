@@ -93,7 +93,7 @@ def runRead(client_socket=None, ipaddress='10.3.141.198', port=8000):
             image_len = 0
         
 
-        res = image_stream.read(image_len)
+        res = struct.unpack('<s', image_stream.read(image_len))
 
         print(res)
 
