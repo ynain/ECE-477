@@ -8,7 +8,7 @@ import os
 
 # Use the area of the bounding box as the "largest face" finder
 def largestFaceIndex(face):
-    face_locations = fr.face_locations(frame)
+    face_locations = fr.face_locations(face)
     area = []
 
     for top, right, bottom, left in face_locations:
