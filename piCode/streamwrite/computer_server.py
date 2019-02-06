@@ -86,21 +86,18 @@ def sendResult(jsonpackage, connect=None, ipaddress='0.0.0.0', port='8000'):
 
     try:
         stream = io.BytesIO()
-        message = json.dumps(jsonpackage, sort_keys=True)
-        for i in range(len(message)):
-            print(message[0:i+1])
-            struct.pack('<L', message[0:i+1])
-        stream.write('<s', struct.pack(message))
+        message = json.dumps(jsonpackage, sort_keys=True).encode('utf-8')
+        stream.write(struct.pack('<s', message))
 
-        connection.write(struct.pack('<L', self.stream.tell()))
+        connection.write(struct.pack('<L', stream.tell()))
 
         connection.flush()
         
         stream.seek(0)
-        connection.write(self.stream.read())
+        connection.write(stream.read())
         
     finally:
-        print("{} images received".format(count))
+        print("{} sent".format(jsonpackage))
 
         if connect is None: # If the connection was made internally, close all
             connection.close()

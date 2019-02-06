@@ -78,6 +78,8 @@ def runPi():
         try:
             client_socket = socket.socket()
             pi.runConnect(client_socket=client_socket)
+
+            pi.runRead(client_socket=client_socket)
         except Exception as e:
             print(e)
         finally:
