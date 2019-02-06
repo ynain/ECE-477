@@ -77,6 +77,25 @@ def runConnect(client_socket=None, ipaddress='10.3.141.198', port=8000):
     print('Sent %d images in %d seconds at %.2ffps' % (
         measure['count'], measure['finish']-measure['start'], measure['count'] / (measure['finish']-measure['start'])))
 
+def runRead(client_socket=None, ipaddress='10.3.141.198', port=8000):
+    if client_socket is None:
+        # Start a socket listening for connections on 0.0.0.0:8000 (0.0.0.0 means
+        # all interfaces)
+        client_socket = socket.socket()
+
+    # Instigate a single connection and make a file-like object out of it
+    client_socket.connect((ipaddress, port))
+    connection = client_socket.makefile('rb')
+
+    try:
+        
+
+    finally:
+        connection.close()
+
+    print('Sent %d images in %d seconds at %.2ffps' % (
+        measure['count'], measure['finish']-measure['start'], measure['count'] / (measure['finish']-measure['start'])))
+
 if __name__ == "__main__":
     client_socket = socket.socket()
 

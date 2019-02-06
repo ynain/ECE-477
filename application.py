@@ -54,14 +54,18 @@ def runComp(path="./facenet_trials/runface/", alignface="./facenet_trials/aligne
 
     # Run as a server and allow for face images to be downloaded
     images = comp.getImages(connect=connect, path=framepath)
+    connect.close()
     
     img_feats = facecomp.turnImagesToFeats(images)
 
     res = facecomp.compareListToKnown(img_feats, compknown=known)
 
-    print(res)
-
+    connect = conn.makefile('wb')
+    # Connect to send results to Pi
+    facecomp.sendResult(res, connect=connect)
     connect.close()
+
+    print(res)
     conn.close()
 
     server_socket.close()
