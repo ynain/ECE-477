@@ -8,7 +8,7 @@ import os
 
 # Use the area of the bounding box as the "largest face" finder
 def largestFaceIndex(face):
-    face_locations = fr.face_locations(frame)
+    face_locations = fr.face_locations(face)
     area = []
 
     for top, right, bottom, left in face_locations:
@@ -52,10 +52,11 @@ def readFaceEncodings(encode_path="known_faces"):
         encodefile = os.path.join(encode_path, person, "encodings_"+person+".npz")
         res[person] = []
 
-        npzclass = np.load(encodefile)
+        if os.path.isfile(encodefile):
+            npzclass = np.load(encodefile)
 
-        for fn in npzclass.files:
-            res[person].extend(npzclass[fn])
+            for fn in npzclass.files:
+                res[person].extend(npzclass[fn])
     
     return res
 
@@ -98,8 +99,8 @@ def turnImagesToFeats(images):
     return res
 
 if __name__ == "__main__":
-    # res = getFaceEncodings()
-    # writeFaceEncodings(res)
-    known = readFaceEncodings()
-    print(known["Ian"])
-    print(compareListToKnown(known["Ian"], known))
+    res = getFaceEncodings()
+    writeFaceEncodings(res)
+    # known = readFaceEncodings()
+    # print(known["Ian"])
+    # print(compareListToKnown(known["Ian"], known))
