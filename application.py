@@ -2,6 +2,8 @@
 
 import os
 import sys
+import datetime
+import cv2
 import socket
 import shutil
 
@@ -33,7 +35,7 @@ def runStuff():
 
     return compsystem.nodename
 
-def runComp(path="./facenet_trials/runface/", alignface="./facenet_trials/aligned_images/"):
+def runComp(path="./facenet_trials/runface/", alignface="./facenet_trials/aligned_images/", writeImagePath=None):
     framepath = os.path.join(os.getcwd(), os.path.join(path, 'frames/'))
     path = os.path.join(os.getcwd(), path)
     alignface = os.path.join(os.getcwd(), alignface)
@@ -55,8 +57,14 @@ def runComp(path="./facenet_trials/runface/", alignface="./facenet_trials/aligne
     # Run as a server and allow for face images to be downloaded
     images = comp.getImages(connect=connect, path=framepath, ipaddress='0.0.0.0', port='8000')
     connect.close()
-    
-    img_feats = facecomp.turnImagesToFeats(images)
+
+    if not writeImagePath is None:
+        now = datetime.datetime.today().strftime('%Y-%m-%d_%H-%M-%S')
+
+        for i in range(len(images)):
+            cv2.imwrite(writeImagePath, images[i]) # "alt_trials/input_images/Ian/frame{}_{}.jpg".format(i, now)
+        
+        img_feats = facecomp.turnImagesToFeats(images)
 
     res = facecomp.compareListToKnown(img_feats, compknown=known)
 
