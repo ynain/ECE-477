@@ -49,7 +49,8 @@ def lookUpNearbyBluetoothDevices(wanted):
     return res  # None if device wasn't found
     
 if __name__ == "__main__":
-    wanted = lookUpNearbyBluetoothDevices("Galaxy Note8")
+    #wanted = lookUpNearbyBluetoothDevices("Galaxy Note8")
+    wanted = lookUpNearbyBluetoothDevices("HC-05")
 
     print("{} found at {}".format(wanted["name"], wanted["address"])) 
     
