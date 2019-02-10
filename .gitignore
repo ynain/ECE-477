@@ -13,11 +13,11 @@ Thumbs.db
 !**/README.md
 
 # ignoring images til testing is over #
-aligned_images
-input_images
-known_faces
-myclassifier
+*.jpg
+*.npg
+facenet_trials
 runface
+!encodings_*.npz
 
 # virtual environment and VS code items #
 face
