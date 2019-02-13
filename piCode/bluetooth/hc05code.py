@@ -6,6 +6,11 @@ port = 1
 sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
 sock.connect((bd_addr, port))
 print("Connected")
+
+while True:
+    sock.send('hello world!')
+
+'''
 count = 0
 
 while count<10:
@@ -13,4 +18,5 @@ while count<10:
     print("Received: {}".format(data))
 
     count += 1
+'''
 sock.close()

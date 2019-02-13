@@ -13,45 +13,62 @@ Found from https://gist.github.com/keithweaver/3d5dbf38074cee4250c7d9807510c7c3
 import bluetooth
 
 def receiveMessages():
-  server_sock=bluetooth.BluetoothSocket( bluetooth.RFCOMM )
-  
-  port = 1
-  server_sock.bind(("",port))
-  server_sock.listen(1)
-  
-  client_sock,address = server_sock.accept()
-  print("Accepted connection from {}".format(address))
-  
-  data = client_sock.recv(1024)
-  print("received {}".format(data))
-  
-  client_sock.close()
-  server_sock.close()
+    server_sock=bluetooth.BluetoothSocket( bluetooth.RFCOMM )
+
+    port = 0x1001
+    server_sock.bind(("",port))
+    server_sock.listen(1)
+
+    print("Listening for connections...")
+
+    import re, uuid 
+    print(':'.join(re.findall('..', '%012x' % uuid.getnode())).encode())
+    client_sock,address = server_sock.accept()
+    print("Accepted connection from {}".format(address))
+
+    data = client_sock.recv(1024)
+    print("received {}".format(data))
+
+    client_sock.close()
+    server_sock.close()
   
 def sendMessageTo(targetBluetoothMacAddress):
-  port = 1
-  sock=bluetooth.BluetoothSocket( bluetooth.RFCOMM )
-  sock.connect((targetBluetoothMacAddress, port))
-  sock.send("hello!!")
-  sock.close()
+    port = 1
+    sock=bluetooth.BluetoothSocket( bluetooth.RFCOMM )
+    sock.connect((targetBluetoothMacAddress, port))
+    sock.send("hello!!")
+    sock.close()
   
 def lookUpNearbyBluetoothDevices(wanted):
+    res = []
+
     print("Searching for Bluetooth devices...")
-    nearby = bluetooth.discover_devices(duration=8, lookup_names=True, flush_cache=True, lookup_class=False)
+    nearby = bluetooth.discover_devices(duration=4, lookup_names=True, flush_cache=True, lookup_class=False)
     print("There are {} devices nearby:".format(len(nearby)))
 
-    res = None
-
     for addr, name in nearby:
+        print("{} found at {}".format(name, addr)) 
+        
         if name == wanted:
-            res = {"address": addr, "name": name}
+            res.append({"address": addr, "name": name})
     
     return res  # None if device wasn't found
     
 if __name__ == "__main__":
-    #wanted = lookUpNearbyBluetoothDevices("Galaxy Note8")
+    # wanted = lookUpNearbyBluetoothDevices("Galaxy Note8")
     wanted = lookUpNearbyBluetoothDevices("HC-05")
 
-    print("{} found at {}".format(wanted["name"], wanted["address"])) 
+    print("\n\n")
     
-    sendMessageTo(wanted["address"])
+    if not len(wanted):
+        print("No devices found to connect to")
+    else:
+        for el in wanted:
+            try:
+                print("Trying to connect to {} at {}".format(el["name"], el["address"]))
+                sendMessageTo(el["address"])
+            except Exception as e:
+                print(e)
+                print("Connection unsuccessful?")
+
+    receiveMessages()
