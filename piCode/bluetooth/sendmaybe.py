@@ -11,6 +11,8 @@ Found from https://gist.github.com/keithweaver/3d5dbf38074cee4250c7d9807510c7c3
 # Taken from: https://people.csail.mit.edu/albert/bluez-intro/c212.html
 
 import bluetooth
+import time
+import cv2
 
 def receiveMessages():
     server_sock=bluetooth.BluetoothSocket( bluetooth.RFCOMM )
@@ -23,6 +25,7 @@ def receiveMessages():
 
     import re, uuid 
     print(':'.join(re.findall('..', '%012x' % uuid.getnode())).encode())
+
     client_sock,address = server_sock.accept()
     print("Accepted connection from {}".format(address))
 
@@ -36,7 +39,23 @@ def sendMessageTo(targetBluetoothMacAddress):
     port = 1
     sock=bluetooth.BluetoothSocket( bluetooth.RFCOMM )
     sock.connect((targetBluetoothMacAddress, port))
-    sock.send("hello!!")
+
+    send = "Connected?"
+    key = 1
+
+    while not key == ord('q'):
+        sock.send(key)
+
+        key = cv2.waitKey(50)
+        if key == -1:
+            key = "nothing"
+        send = "Pressed {}".format(key)
+        print(send)
+
+
+    #sock.send("EVAN+JAMES1234")
+    #sock.send("E3")
+    #sock.send("ABCDEFGHIJ")
     sock.close()
   
 def lookUpNearbyBluetoothDevices(wanted):
@@ -71,4 +90,4 @@ if __name__ == "__main__":
                 print(e)
                 print("Connection unsuccessful?")
 
-    receiveMessages()
+#    receiveMessages()
