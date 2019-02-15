@@ -51,11 +51,7 @@ def sendMessageTo(targetBluetoothMacAddress):
             key = "nothing"
         send = "Pressed {}".format(key)
         print(send)
-
-
-    #sock.send("EVAN+JAMES1234")
-    #sock.send("E3")
-    #sock.send("ABCDEFGHIJ")
+        
     sock.close()
   
 def lookUpNearbyBluetoothDevices(wanted):
@@ -90,4 +86,4 @@ if __name__ == "__main__":
                 print(e)
                 print("Connection unsuccessful?")
 
-#    receiveMessages()
+    # receiveMessages()
