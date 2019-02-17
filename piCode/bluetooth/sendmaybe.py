@@ -14,26 +14,20 @@ import bluetooth
 import time
 import cv2
 
-def receiveMessages():
-    server_sock=bluetooth.BluetoothSocket( bluetooth.RFCOMM )
-
-    port = 0x1001
-    server_sock.bind(("",port))
-    server_sock.listen(1)
+def receiveMessages(targetBluetoothMacAddress):
+    port = 1
+    sock = bluetooth.BluetoothSocket( bluetooth.RFCOMM )
+    sock.connect((targetBluetoothMacAddress, port))
 
     print("Listening for connections...")
 
     import re, uuid 
     print(':'.join(re.findall('..', '%012x' % uuid.getnode())).encode())
 
-    client_sock,address = server_sock.accept()
-    print("Accepted connection from {}".format(address))
-
-    data = client_sock.recv(1024)
+    data = sock.recv(1024)
     print("received {}".format(data))
 
-    client_sock.close()
-    server_sock.close()
+    sock.close()
   
 def sendMessageTo(targetBluetoothMacAddress):
     port = 1
@@ -70,6 +64,7 @@ def lookUpNearbyBluetoothDevices(wanted):
     return res  # None if device wasn't found
     
 if __name__ == "__main__":
+    """
     # wanted = lookUpNearbyBluetoothDevices("Galaxy Note8")
     wanted = lookUpNearbyBluetoothDevices("HC-05")
 
@@ -85,5 +80,5 @@ if __name__ == "__main__":
             except Exception as e:
                 print(e)
                 print("Connection unsuccessful?")
-
-    # receiveMessages()
+    """
+    receiveMessages()
