@@ -6,6 +6,8 @@ import datetime
 import cv2
 import socket
 import shutil
+import nmap
+import netifaces as ni
 
 import rotateImages as rotate
 
@@ -22,16 +24,20 @@ OnPi = compsystem.nodename == 'raspberrypi'
 
 if OnPi:
     from piCode.streamwrite import pi_client as pi
+    WIFI = 'wlan0'
 else:
+    WIFI = None # wifi function won't work if not on Pi
     from alt_trials import mapfaceEncodings as facecomp
     from piCode.streamwrite import computer_server as comp
 
 
-def runStuff(writeImagePath=None, rot=False):
+def runStuff(wifiAddress=None, writeImagePath=None, rot=False):
     compsystem = os.uname()
     
     if OnPi:
-        runPi()
+        if wifiAddress is None:
+            wifiAddress = findIPaddress()
+        runPi(ipaddress=wifiAddress)
     else:
         runComp(writeImagePath=writeImagePath, rot=rot)
 
@@ -98,14 +104,33 @@ def runPi(ipaddress='10.3.141.198', port=8000):
         try:
             client_socket = socket.socket()
             client_socket.connect((ipaddress, port))
-            pi.runConnect(connect=client_socket, ipaddress='10.3.141.198', port=8000)
+            pi.runConnect(connect=client_socket, ipaddress=ipaddress, port=8000)
 
-            pi.runRead(connect=client_socket, ipaddress='10.3.141.198', port=8000)
+            pi.runRead(connect=client_socket, ipaddress=ipaddress, port=8000)
         except Exception as e:
             print(e)
         finally:
             command = input("Type 'quit' to exit this process\n")
             client_socket.close()
 
+def findIPaddress(ethwifi='wlan0'):
+    if WIFI not None:
+        ip = ni.ifaddresses(ethwifi)[ni.AF_INET][0]['addr']
+        nm = nmap.PortScanner()
+
+        nm.scan(ip+"/24")
+        hosts = nm.all_hosts()
+        print(hosts)
+
+        while ip in hosts:
+            hosts.remove(ip)
+        
+        print(hosts)
+        if len(hosts):
+            return hosts[0] # No good way to tell if > 1... cross fingers
+
+    # If here, no idea what to do, default to Ian's Ubuntu?    
+    return '10.3.141.198'
+
 if __name__ == "__main__":
-    print(runStuff(rot=True))
+    print(runStuff(wifiAddress='10.3.141.198', rot=True))

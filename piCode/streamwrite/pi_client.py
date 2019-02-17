@@ -12,7 +12,6 @@ import struct
 import json
 import copy
 import time
-import threading
 import picamera
 
 class writeSingleImage():
