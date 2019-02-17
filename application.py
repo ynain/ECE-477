@@ -113,9 +113,9 @@ def runPi(ipaddress='10.3.141.198', port=8000):
             command = input("Type 'quit' to exit this process\n")
             client_socket.close()
 
-def findIPaddress(ethwifi='wlan0'):
-    if WIFI not None:
-        ip = ni.ifaddresses(ethwifi)[ni.AF_INET][0]['addr']
+def findIPaddress():
+    if not WIFI is None:
+        ip = ni.ifaddresses(WIFI)[ni.AF_INET][0]['addr']
         nm = nmap.PortScanner()
 
         nm.scan(ip+"/24")
@@ -133,4 +133,4 @@ def findIPaddress(ethwifi='wlan0'):
     return '10.3.141.198'
 
 if __name__ == "__main__":
-    print(runStuff(wifiAddress='10.3.141.198', rot=True))
+    print(runStuff(rot=True))
