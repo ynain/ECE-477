@@ -25,7 +25,7 @@ def getImages(connect=None, path='./frames/', ipaddress='0.0.0.0', port='8000', 
     
     connection = connect    # Unify paths
 
-    print("connected")
+    print("Receiving files...")
 
     count = 0
     images = []
@@ -49,13 +49,13 @@ def getImages(connect=None, path='./frames/', ipaddress='0.0.0.0', port='8000', 
             # print('Image is %dx%d' % image.shape[0:2])
             count += 1
     finally:
-        print("{} images received".format(count))
+        print("{} images received\n".format(count))
 
         if printing:
             for i in range(len(images)):
                 imgname = os.path.join(path,"frame{}.jpg".format(i))
                 cv2.imwrite(imgname, images[i])
-                print(imgname)
+                # print(imgname)
             print("Images saved")
 
         if connect is None: # If the connection was made internally, close all
@@ -79,7 +79,7 @@ def sendResult(jsonpackage, connect=None, ipaddress='0.0.0.0', port='8000'):
     
     connection = connect    # Unify paths
 
-    print("connected")
+    print("sending results...")
 
     count = 0
     images = []
@@ -87,20 +87,15 @@ def sendResult(jsonpackage, connect=None, ipaddress='0.0.0.0', port='8000'):
     try:
         stream = io.BytesIO()
         stream.write(json.dumps(jsonpackage, sort_keys=True).encode('utf-8'))
-        print(stream.tell())
-        print(struct.pack('<L', stream.tell()))
-        print(struct.unpack('<L', struct.pack('<L', stream.tell())))
         connection.write(struct.pack('<L', stream.tell()))
 
         connection.flush()
         
         stream.seek(0)
         connection.write(stream.read())
+        print("Sent")
         
     finally:
-        print(jsonpackage)
-        print("sent")
-
         if connect is None: # If the connection was made internally, close all
             connection.close()
             conn.close()

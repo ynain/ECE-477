@@ -7,6 +7,8 @@ import cv2
 import socket
 import shutil
 
+import rotateImages as rotate
+
 # Project is built using Python 3.5+, please comply
 if sys.version_info[0] < 3:
     sys.exit('''Project is built using Python 3.5+\n'''
@@ -25,21 +27,18 @@ else:
     from piCode.streamwrite import computer_server as comp
 
 
-def runStuff():
+def runStuff(writeImagePath=None, rot=False):
     compsystem = os.uname()
     
     if OnPi:
         runPi()
     else:
-        runComp()
+        runComp(writeImagePath=writeImagePath, rot=rot)
 
     return compsystem.nodename
 
-def runComp(path="./facenet_trials/runface/", alignface="./facenet_trials/aligned_images/", writeImagePath=None):
-    framepath = os.path.join(os.getcwd(), os.path.join(path, 'frames/'))
-    path = os.path.join(os.getcwd(), path)
-    alignface = os.path.join(os.getcwd(), alignface)
-
+def runComp(writeImagePath=None, rot=False):
+    
     known = facecomp.readFaceEncodings(encode_path="./alt_trials/known_faces/")
     
     # Make a socket connection that can be written to
@@ -55,25 +54,38 @@ def runComp(path="./facenet_trials/runface/", alignface="./facenet_trials/aligne
     connect = conn.makefile('rb')
 
     # Run as a server and allow for face images to be downloaded
-    images = comp.getImages(connect=connect, path=framepath, ipaddress='0.0.0.0', port='8000')
+    images = comp.getImages(connect=connect, ipaddress='0.0.0.0', port='8000')
+    
     connect.close()
+    
+    # For our orientation during testing, images need to be corrected
+    # The face_recognition library can't see faces that aren't upright
+    if rot:
+        images = rotate.rotList(images)
 
+    # If we desire to write images to a file location, this writes those files
     if not writeImagePath is None:
+        if not os.path.exists(writeImagePath):
+            os.makedirs(writeImagePath)
+            
         now = datetime.datetime.today().strftime('%Y-%m-%d_%H-%M-%S')
 
         for i in range(len(images)):
-            cv2.imwrite(writeImagePath, images[i]) # "alt_trials/input_images/Ian/frame{}_{}.jpg".format(i, now)
-        
-        img_feats = facecomp.turnImagesToFeats(images)
+            cv2.imwrite(os.path.join(writeImagePath, "frame{}_{}.jpg".format(i, now)), images[i])
+    
+    # get image features (of the largest face)
+    img_feats = facecomp.turnImagesToFeats(images)
 
+    # find if it compares to any of the 
     res = facecomp.compareListToKnown(img_feats, compknown=known)
 
+    # Connect to the pi again
     connect = conn.makefile('wb')
-    # Connect to send results to Pi
+    # Send results to Pi
     comp.sendResult(res, connect=connect, ipaddress='0.0.0.0', port='8000')
     connect.close()
 
-    print(res)
+    # print(res)
     conn.close()
 
     server_socket.close()
@@ -96,4 +108,4 @@ def runPi(ipaddress='10.3.141.198', port=8000):
             client_socket.close()
 
 if __name__ == "__main__":
-    print(runStuff())
+    print(runStuff(rot=True))
