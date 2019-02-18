@@ -1,7 +1,16 @@
 import bluetooth
+import signal
 import sys
 import time
 BD_ADDR = "98:D3:71:FD:50:9E"
+
+def closeSocket(socket):
+    def signal_handler(sig, frame):
+        print("\nCtrl+C signal sensed!\nClosing the socket...")
+        socket.close()
+        sys.exit(0)
+
+    return signal_handler
 
 
 def sendMessageTo(message, looped=False):
@@ -32,6 +41,31 @@ def receiveMessageFrom(looped=False):
 
     sock.close()
 
+def sendAndReceive(message, looped=True):
+    port = 1
+    sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
+    sock.connect((BD_ADDR, port))
+    print("Connected")
 
-receiveMessageFrom(looped=True)
+    signal.signal(signal.SIGINT, closeSocket(sock))
+
+    sock.send(message)
+    #print('sent?')
+    #time.sleep()
+    data = (sock.recv(1024)).decode('utf-8')
+    msg = ''
+
+    while data != '\n':
+    #while True:
+        data = (sock.recv(32)).decode('utf-8')
+        msg += data
+        print(msg)
+
+    print(msg)
+    sock.close()
+
+        
+sendAndReceive(sys.argv[1], looped=False)
+#sendMessageTo('0')
+#receiveMessageFrom(looped=True)
 
