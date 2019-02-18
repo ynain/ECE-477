@@ -9,7 +9,7 @@ import shutil
 import nmap
 import netifaces as ni
 
-import rotateImages as rotate
+import src.rotateImages as rotate
 
 # Project is built using Python 3.5+, please comply
 if sys.version_info[0] < 3:
@@ -23,12 +23,12 @@ compsystem = os.uname()
 OnPi = compsystem.nodename == 'raspberrypi'
 
 if OnPi:
-    from piCode.streamwrite import pi_client as pi
+    from src.piCode.streamwrite import pi_client as pi
     WIFI = 'wlan0'
 else:
     WIFI = None # wifi function won't work if not on Pi
-    from alt_trials import mapfaceEncodings as facecomp
-    from piCode.streamwrite import computer_server as comp
+    from src.alt_trials import mapfaceEncodings as facecomp
+    from src.piCode.streamwrite import computer_server as comp
 
 
 def runStuff(wifiAddress=None, writeImagePath=None, rot=False):
