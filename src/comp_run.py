@@ -13,7 +13,7 @@ import src.rotateImages as rotate
 def getKnownFaces(encode_path="./src/alt_trials/known_faces/"):
     return fmap.readFaceEncodings(encode_path=encode_path)
 
-def getConnections():
+def getConnection():
     # Make a socket connection that can be written to
     server_socket = socket.socket()
     server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -24,12 +24,18 @@ def getConnections():
 
     # Accept a single connection and make a file-like object out of it
     conn, addr = server_socket.accept()
+
+    print("Device at {} connected!".format(addr))
+
+    return (conn, addr)
+
+def getWriteSocs(conn):
     recv = conn.makefile('rb')
     send = conn.makefile('wb')
 
-    print("Device at {} connected!")
+    print("Process ready")
 
-    return (conn, send, recv, addr)
+    return (send, recv)
 
 def getImages(connect=None, path='./frames/', ipaddress='0.0.0.0', port='8000', printing=False):
     return cstr.getImages(connect=connect, path=path, ipaddress=ipaddress, port=port, printing=printing)
@@ -58,9 +64,10 @@ def getResults(images, known):
 def sendResults(res, connect=None, ipaddress='0.0.0.0', port='8000'):
     cstr.sendResult(res, connect=connect, ipaddress=ipaddress, port=port)
 
-def closeConnections(connect, recv, send):
+def closeConnection(connect):
     connect.close()
-    recv.close()
-    send.close()
+    print("Main connection closed")
 
-    print("All connections closed")
+def closeWriteFiles(send, recv):
+    send.close()
+    recv.close()

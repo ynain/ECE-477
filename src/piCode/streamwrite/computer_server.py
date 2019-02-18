@@ -11,7 +11,7 @@ import struct
 import cv2
 import numpy as np
 
-def getImages(connect=None, path='./frames/', ipaddress='0.0.0.0', port='8000', printing=False):
+def getImages(connect=None, path='./frames/', ipaddress='0.0.0.0', port='8000', printing=False, log=False):
     if connect is None:
         # Make a socket connection that can be written to
         server_socket = socket.socket()
@@ -25,7 +25,8 @@ def getImages(connect=None, path='./frames/', ipaddress='0.0.0.0', port='8000', 
     
     connection = connect    # Unify paths
 
-    print("Receiving files...")
+    if log:
+        print("Receiving files...")
 
     count = 0
     images = []
@@ -49,7 +50,8 @@ def getImages(connect=None, path='./frames/', ipaddress='0.0.0.0', port='8000', 
             # print('Image is %dx%d' % image.shape[0:2])
             count += 1
     finally:
-        print("{} images received\n".format(count))
+        if log:
+            print("{} images received\n".format(count))
 
         if printing:
             for i in range(len(images)):
@@ -65,7 +67,7 @@ def getImages(connect=None, path='./frames/', ipaddress='0.0.0.0', port='8000', 
     
     return images
 
-def sendResult(jsonpackage, connect=None, ipaddress='0.0.0.0', port='8000'):
+def sendResult(jsonpackage, connect=None, ipaddress='0.0.0.0', port='8000', log=False):
     if connect is None:
         # Make a socket connection that can be written to
         server_socket = socket.socket()
@@ -79,7 +81,8 @@ def sendResult(jsonpackage, connect=None, ipaddress='0.0.0.0', port='8000'):
     
     connection = connect    # Unify paths
 
-    print("sending results...")
+    if log:
+        print("Sending results...")
 
     count = 0
     images = []
@@ -94,7 +97,9 @@ def sendResult(jsonpackage, connect=None, ipaddress='0.0.0.0', port='8000'):
         stream.seek(0)
         connection.write(stream.read())
         connection.flush()
-        print("Sent")
+        
+        if log:
+            print("Sent")
         
     finally:
         if connect is None: # If the connection was made internally, close all
