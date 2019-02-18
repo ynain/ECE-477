@@ -58,12 +58,12 @@ def sendAndReceive(message, looped=True):
     #while data != '\n':
     while True:
         data = (sock.recv(32)).decode('utf-8')
+        #time.sleep(5)
+        #print("-=-=-=-")
         msg += data
-        #print(msg)
-        if msg[-1] == '\n':
-            break
+        print(msg)
+        break
 
-    print(msg)
     sock.close()
 
         
