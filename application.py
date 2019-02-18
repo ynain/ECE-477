@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 
+from src.comp_run import *
+
 def runComputer(writeImagePath=None, rot=False):
     known = getKnownFaces()
     while True:
-        connect, recv, send, addr = getConnections_Known()
+        conn, recv, send, _ = getConnections()
 
-        print("Device at {} connected!")
         while True:
             try:
-                images = comp.getImages(connect=connect)
+                images = getImages(connect=recv)
 
                 # For our orientation during testing, images need to be corrected
                 # The face_recognition library can't see faces that aren't upright
@@ -16,14 +17,11 @@ def runComputer(writeImagePath=None, rot=False):
                     images = rotate.rotList(images)
 
                 if not writeImagePath is None:
-                    writeImages(images)
+                    writeImages(images, writeImagePath)
                 
-                res = facecomp.compareListToKnown(
-                    facecomp.turnImagesToFeats(images),
-                    known
-                )
+                res = getResults(images, known)
 
-                comp.sendResult(res, connect=connect)
+                sendResult(res, connect=send)
             except Exception as e:
                 print(e)
                 break
