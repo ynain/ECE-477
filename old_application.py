@@ -133,4 +133,4 @@ def findIPaddress():
     return '10.3.141.198'
 
 if __name__ == "__main__":
-    print(runStuff(ipaddress='10.3.141.198', rot=True))
+    print(runStuff(wifiAddress='10.3.141.198', rot=True))
