@@ -68,6 +68,6 @@ def closeConnection(connect):
     connect.close()
     print("Main connection closed")
 
-def closeWriteFiles(send, recv):
+def closeWriteSocs(send, recv):
     send.close()
     recv.close()

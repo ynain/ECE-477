@@ -7,12 +7,14 @@ import nmap
 from src.piCode.streamwrite import pi_client as pstr
 
 def getConnection(ipaddress='10.3.141.198', port=8000):
-        connect = socket.socket()
-        connect.connect((ipaddress, port))
+    connect = socket.socket()
+    connect.connect((ipaddress, port))
 
-def getWriteSocs(connection):
-    send = connect.makefile('wb')
-    recv = connect.makefile('rb')
+    return connect
+
+def getWriteSocs(conn):
+    send = conn.makefile('wb')
+    recv = conn.makefile('rb')
 
     return (send, recv)
 
@@ -20,9 +22,9 @@ def sendFrames(connect=None, ipaddress='10.3.141.198', port=8000):
     pstr.runConnect(connect=connect, ipaddress=ipaddress, port=port)
 
 def readResults(connect=None, ipaddress='10.3.141.198', port=8000):
-    pstr.runRead(connect=connect, ipaddress=ipaddress, port=8000)
+    return pstr.runRead(connect=connect, ipaddress=ipaddress, port=8000)
 
-def closeWriteFiles(send, recv):
+def closeWriteSocs(send, recv):
     send.close()
     recv.close()
 

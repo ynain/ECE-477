@@ -52,7 +52,7 @@ def runComputer(writeImagePath=None, rot=False):
                 break
             
             if not send is None or not recv is None:
-                cr.closeWriteFiles(send, recv)
+                cr.closeWriteSocs(send, recv)
         
         cr.closeConnection(conn)
     
@@ -76,9 +76,9 @@ def runPi(ipaddress='10.3.141.198', port=8000):
                     break
             
                 if not send is None or not recv is None:
-                    cr.closeWriteFiles(send, recv)
+                    pi.closeWriteSocs(send, recv)
             
-                command = input("Type 'quit' to quit\n")
+                command = input("Type anything to send images again,\n or 'quit' to quit\n")
             pi.closeConnection(conn)
         except Exception as e:
             traceback.print_exc()

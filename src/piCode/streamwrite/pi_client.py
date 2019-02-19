@@ -92,6 +92,8 @@ def runRead(connect=None, ipaddress='10.3.141.198', port=8000):
     # Instigate a single connection and make a file-like object out of it
     connection = connect
 
+    res = {}
+
     try:
         json_len = struct.unpack('<L', connection.read(struct.calcsize('<L')))[0]
         if not json_len:
@@ -106,6 +108,8 @@ def runRead(connect=None, ipaddress='10.3.141.198', port=8000):
         if connect is None: # If the connection was made internally, close all
             connection.close()
             conn.close()
+
+        return res
 
 
 if __name__ == "__main__":
