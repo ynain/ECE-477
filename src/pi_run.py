@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import socket
-import netfaces as ni
+import netifaces as ni
 import nmap
 
 from src.piCode.streamwrite import pi_client as pstr

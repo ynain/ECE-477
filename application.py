@@ -61,25 +61,32 @@ def runPi(ipaddress='10.3.141.198', port=8000):
 
     command = ''
     while command != 'quit':
-        conn = pi.getConnection()
-        while command != 'quit':
-            send = recv = None
-            try:
-                send, recv = pi.getWriteSocs(conn)
-                pi.sendFrames(connect=send)
+        try:
+            conn = pi.getConnection(ipaddress=ipaddress)
+            while command != 'quit':
+                send = recv = None
+                try:
+                    send, recv = pi.getWriteSocs(conn)
+                    pi.sendFrames(connect=send)
 
-                pi.readResults(connect=recv)
-            except Exception:
-                traceback.print_exc()
-                print("Breaking")
-                break
+                    pi.readResults(connect=recv)
+                except Exception:
+                    traceback.print_exc()
+                    print("Breaking")
+                    break
             
-            if not send is None or not recv is None:
-                cr.closeWriteFiles(send, recv)
+                if not send is None or not recv is None:
+                    cr.closeWriteFiles(send, recv)
             
-            command = input("Type 'quit' to quit")
-        pi.closeConnection(conn)
-        command = input("Main connection failure, type 'quit' not to retry")
+                command = input("Type 'quit' to quit\n")
+            pi.closeConnection(conn)
+        except Exception as e:
+            traceback.print_exc()
+
+        finally:
+            command = input("Main connection failure, type 'quit' not to retry\n")
+
+    print("{} entered".format(command))
 
 if __name__ == "__main__":
     if OnPi:
