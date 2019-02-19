@@ -48,6 +48,7 @@ def runConnect(connect=None, ipaddress='10.3.141.198', port=8000):
         # all interfaces)
         connect = socket.socket()
         connect.connect((ipaddress, port))
+        connect = connect.makefile('wb')
 
     # Instigate a single connection and make a file-like object out of it
     connection = connect.makefile('wb')
