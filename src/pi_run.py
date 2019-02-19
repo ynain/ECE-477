@@ -16,11 +16,11 @@ def getWriteSocs(connection):
 
     return (send, recv)
 
-def sendFrames(connect=None):
-    pass
+def sendFrames(connect=None, ipaddress='10.3.141.198', port=8000):
+    pstr.runConnect(connect=connect, ipaddress=ipaddress, port=port)
 
-def readResults(connect=None):
-    pass
+def readResults(connect=None, ipaddress='10.3.141.198', port=8000):
+    pstr.runRead(connect=connect, ipaddress=ipaddress, port=8000)
 
 def closeWriteFiles(send, recv):
     send.close()
@@ -29,7 +29,7 @@ def closeWriteFiles(send, recv):
 def closeConnection(connection):
     connection.close()
 
-def findIPaddress():
+def findConnectedIPaddress():
     if not WIFI is None:
         ip = ni.ifaddresses(WIFI)[ni.AF_INET][0]['addr']
         nm = nmap.PortScanner()

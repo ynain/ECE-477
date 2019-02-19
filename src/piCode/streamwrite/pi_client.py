@@ -51,7 +51,7 @@ def runConnect(connect=None, ipaddress='10.3.141.198', port=8000):
         connect = connect.makefile('wb')
 
     # Instigate a single connection and make a file-like object out of it
-    connection = connect.makefile('wb')
+    connection = connect
 
     measure = {
         'start': time.time(),
@@ -74,9 +74,8 @@ def runConnect(connect=None, ipaddress='10.3.141.198', port=8000):
         sender.end()
 
     finally:
-        connection.close()
-
         if connect is None: # If the connection was made internally, close all
+            connection.close()
             client_socket.close()
 
     print('Sent %d images in %d seconds at %.2ffps' % (
@@ -86,11 +85,12 @@ def runRead(connect=None, ipaddress='10.3.141.198', port=8000):
     if connect is None:
         # Start a socket listening for connections on 0.0.0.0:8000 (0.0.0.0 means
         # all interfaces)
-        connect = socket.socket()
-        connect.connect((ipaddress, port))
+        conn = socket.socket()
+        conn.connect((ipaddress, port))
+        connect = conn.makefile('rb')
 
     # Instigate a single connection and make a file-like object out of it
-    connection = connect.makefile('rb')
+    connection = connect
 
     try:
         json_len = struct.unpack('<L', connection.read(struct.calcsize('<L')))[0]
@@ -103,16 +103,18 @@ def runRead(connect=None, ipaddress='10.3.141.198', port=8000):
         print(res)
 
     finally:
-        connection.close()
-
         if connect is None: # If the connection was made internally, close all
-            client_socket.close()
+            connection.close()
+            conn.close()
 
 
 if __name__ == "__main__":
     client_socket = socket.socket()
+    client_socket.connect(('10.3.141.198', 8000))
+    connect = client_socket.makefile('rb')
 
-    runConnect(client_socket=client_socket)
+    runConnect(client_socket=connect)
 
     client_socket.close()
+    connect.close()
 
