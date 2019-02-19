@@ -37,8 +37,8 @@ def getWriteSocs(conn):
 
     return (send, recv)
 
-def getImages(connect=None, path='./frames/', ipaddress='0.0.0.0', port='8000', printing=False):
-    return cstr.getImages(connect=connect, path=path, ipaddress=ipaddress, port=port, printing=printing)
+def getImages(connect=None, path='./frames/', ipaddress='0.0.0.0', port='8000', printing=False, log=False):
+    return cstr.getImages(connect=connect, path=path, ipaddress=ipaddress, port=port, printing=printing, log=log)
 
 def rotList(images):
     return rotate.rotList(images)
@@ -61,8 +61,8 @@ def getResults(images, known):
                 known
             )
 
-def sendResults(res, connect=None, ipaddress='0.0.0.0', port='8000'):
-    cstr.sendResult(res, connect=connect, ipaddress=ipaddress, port=port)
+def sendResults(res, connect=None, ipaddress='0.0.0.0', port='8000', log=False):
+    cstr.sendResult(res, connect=connect, ipaddress=ipaddress, port=port, log=log)
 
 def closeConnection(connect):
     connect.close()

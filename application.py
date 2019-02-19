@@ -32,7 +32,7 @@ def runComputer(writeImagePath=None, rot=False):
                 send, recv = cr.getWriteSocs(conn)
                 h.closeSocket(conn, recv, send)
 
-                images = cr.getImages(connect=recv)
+                images = cr.getImages(connect=recv, log=False)
 
                 # For our orientation during testing, images need to be corrected
                 # The face_recognition library can't see faces that aren't upright
@@ -45,7 +45,7 @@ def runComputer(writeImagePath=None, rot=False):
                 if len(images):
                     res = cr.getResults(images, known)
 
-                    cr.sendResults(res, connect=send)
+                    cr.sendResults(res, connect=send, log=False)
             except Exception:
                 traceback.print_exc()
                 print("Breaking")
