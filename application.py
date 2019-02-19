@@ -3,6 +3,7 @@
 import traceback
 import struct
 import sys
+import os
 
 # Project is built using Python 3.5+, please comply
 if sys.version_info[0] < 3:
@@ -10,7 +11,9 @@ if sys.version_info[0] < 3:
              '''Please comply or this won't work properly'''
              )
 
+compsystem = os.uname()
 OnPi = compsystem.nodename == 'raspberrypi'
+
 if OnPi:
     import src.pi_run as pi
 else:
@@ -76,7 +79,6 @@ def runPi(ipaddress='10.3.141.198', port=8000):
         pi.closeConnection(conn)
 
 if __name__ == "__main__":
-    OnPi = compsystem.nodename == 'raspberrypi'
     if OnPi:
         #runPi(ipaddress='10.3.141.198')
         runPi(ipaddress='10.186.129.210')
