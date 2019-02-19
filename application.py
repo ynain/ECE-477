@@ -60,7 +60,7 @@ def runPi(ipaddress='10.3.141.198', port=8000):
     print("Pi Pie Phi guy running")
 
     command = ''
-    while True:
+    while command != 'quit':
         conn = pi.getConnection()
         while command != 'quit':
             send = recv = None
@@ -76,7 +76,10 @@ def runPi(ipaddress='10.3.141.198', port=8000):
             
             if not send is None or not recv is None:
                 cr.closeWriteFiles(send, recv)
+            
+            command = input("Type 'quit' to quit")
         pi.closeConnection(conn)
+        command = input("Main connection failure, type 'quit' not to retry")
 
 if __name__ == "__main__":
     if OnPi:
