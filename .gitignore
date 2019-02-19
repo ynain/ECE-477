@@ -26,3 +26,6 @@ nonet
 
 # Python testing files? #
 __pycache__
+
+# Ignoring vim files
+.swp

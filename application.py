@@ -67,6 +67,7 @@ def runPi(ipaddress='10.3.141.198', port=8000):
 if __name__ == "__main__":
     OnPi = compsystem.nodename == 'raspberrypi'
     if OnPi:
-        runPi()
+        #runPi(ipaddress='10.3.141.198')
+        runPi(ipaddress='10.186.129.210')
     else:
         runComputer(rot=True)
