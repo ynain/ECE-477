@@ -35,6 +35,7 @@ class writeSingleImage():
     
     def end(self):
         self.connection.write(struct.pack('<L', 0))
+        self.connection.flush()
 
 def frameGenerator(connection, frame, sender, captureTime=2):
     while frame['finish'] - frame['start'] < captureTime:
@@ -98,18 +99,16 @@ def runRead(connect=None, ipaddress='10.3.141.198', port=8000):
         json_len = struct.unpack('<L', connection.read(struct.calcsize('<L')))[0]
         if not json_len:
             json_len = 0
-        
 
         res = connection.read(json_len)
         res = json.loads(res.decode('utf-8'))
-        print(res)
 
     finally:
         if connect is None: # If the connection was made internally, close all
             connection.close()
             conn.close()
 
-        return res
+    return res
 
 
 if __name__ == "__main__":

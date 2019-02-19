@@ -104,9 +104,15 @@ def runPi(ipaddress='10.3.141.198', port=8000):
         try:
             client_socket = socket.socket()
             client_socket.connect((ipaddress, port))
-            pi.runConnect(connect=client_socket, ipaddress=ipaddress, port=8000)
+            conn = client_socket.makefile('wb')
+            pi.runConnect(connect=conn, ipaddress=ipaddress, port=8000)
+            conn.close()
 
-            pi.runRead(connect=client_socket, ipaddress=ipaddress, port=8000)
+            conn = client_socket.makefile('rb')
+
+            pi.runRead(connect=conn, ipaddress=ipaddress, port=8000)
+            conn.close()
+
         except Exception as e:
             print(e)
         finally:
@@ -133,4 +139,5 @@ def findIPaddress():
     return '10.3.141.198'
 
 if __name__ == "__main__":
-    print(runStuff(wifiAddress='10.3.141.198', rot=True))
+    # print(runStuff(wifiAddress='10.3.141.198', rot=True))
+    print(runStuff(wifiAddress='10.186.129.210', rot=True))
