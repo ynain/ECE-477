@@ -30,8 +30,8 @@ def getConnection():
     return (conn, addr)
 
 def getWriteSocs(conn):
-    recv = conn.makefile('rb')
     send = conn.makefile('wb')
+    recv = conn.makefile('rb')
 
     print("Process ready")
 

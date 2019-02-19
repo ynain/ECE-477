@@ -2,9 +2,20 @@
 
 import traceback
 import struct
+import sys
 
-import src.comp_run as cr
-import src.pi_run as pi
+# Project is built using Python 3.5+, please comply
+if sys.version_info[0] < 3:
+    sys.exit('''Project is built using Python 3.5+\n'''
+             '''Please comply or this won't work properly'''
+             )
+
+OnPi = compsystem.nodename == 'raspberrypi'
+if OnPi:
+    import src.pi_run as pi
+else:
+    import src.comp_run as cr
+    
 import src.helpers as h
 
 def runComputer(writeImagePath=None, rot=False):
