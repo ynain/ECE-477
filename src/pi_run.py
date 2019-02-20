@@ -77,14 +77,20 @@ def getBlueConnection(dname="HC-05", mac=None, port=1):
     sock = blt.BluetoothSocket( blt.RFCOMM )
     sock.connect((mac, port))
 
+    return sock
+
 
 def sendBlueMessage(bconn, message):
-    print(message)
+    bconn.send(message)
 
 def getBlueMessage(bconn):
     res = ''
 
     while res[-1] != '\n':
+        data = sock.recv(1024)
+        res+= data.decode('utf-8')
+    
+    return res
 
 
 # IP address being dynamic... and slow

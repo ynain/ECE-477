@@ -67,6 +67,7 @@ def runPi(ipaddress='10.3.141.198', port=8000):
             if blue is None:
                 pass
                 # connect to Bluetooth
+                bsock = getBlueConnection(mac="98:D3:71:FD:50:9E")
                 # wait for "boot\n"?
 
             if conn is None:

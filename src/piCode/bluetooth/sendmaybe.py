@@ -27,7 +27,7 @@ def receiveMessages(name="rovian", uuid="d01ca4aa-c79d-43c5-94eb-a7fc4e7fa748"):
 
     bluetooth.advertise_service( server_sock, name, uuid )
     sock, address = server_sock.accept()
-    bluetooth.stop_advertising( sock )
+    bluetooth.stop_advertising( server_sock )
 
     print("Connected!\n   {}".format(address))
 
