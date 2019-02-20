@@ -24,7 +24,7 @@ import src.helpers as h
 def runComputer(writeImagePath=None, rot=False):
     known = cr.getKnownFaces()
     while True:
-        conn, _ = cr.getConnection()
+        conn, _ = cr.getServerConnection()
 
         while True:
             send = recv = None
@@ -60,16 +60,29 @@ def runPi(ipaddress='10.3.141.198', port=8000):
     print("Pi Pie Phi guy running")
 
     command = ''
+    conn = None
+    blue = None
     while command != 'quit':
         try:
-            conn = pi.getConnection(ipaddress=ipaddress)
+            if blue is None:
+                pass
+                # connect to Bluetooth
+                # wait for "boot\n"?
+
+            if conn is None:
+                # connect to server
+                conn = pi.getServerConnection(ipaddress=ipaddress)
+                # send ready after
+
             while command != 'quit':
                 send = recv = None
                 try:
                     send, recv = pi.getWriteSocs(conn)
                     pi.sendFrames(connect=send)
 
-                    pi.readResults(connect=recv)
+                    res = pi.readResults(connect=recv)
+                    respass = pi.evaluateImages(res)
+                    pi.sendResBluetooth(respass)
                 except Exception:
                     traceback.print_exc()
                     print("Breaking")
@@ -80,6 +93,10 @@ def runPi(ipaddress='10.3.141.198', port=8000):
             
                 command = input("Type anything to send images again,\n or 'quit' to quit\n")
             pi.closeConnection(conn)
+        
+        # if lost bluetooth, set blue to None reconnect, wait for start?
+
+        # if lost server, send "l"ost, set conn to None reconnect, send "r"eady after
         except Exception as e:
             traceback.print_exc()
 

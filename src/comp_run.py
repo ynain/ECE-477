@@ -13,7 +13,7 @@ import src.rotateImages as rotate
 def getKnownFaces(encode_path="./src/alt_trials/known_faces/"):
     return fmap.readFaceEncodings(encode_path=encode_path)
 
-def getConnection():
+def getServerConnection():
     # Make a socket connection that can be written to
     server_socket = socket.socket()
     server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)

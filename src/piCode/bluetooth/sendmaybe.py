@@ -13,21 +13,29 @@ Found from https://gist.github.com/keithweaver/3d5dbf38074cee4250c7d9807510c7c3
 import bluetooth
 import time
 import cv2
+import re, uuid
 
-def receiveMessages(targetBluetoothMacAddress):
-    port = 1
-    sock = bluetooth.BluetoothSocket( bluetooth.RFCOMM )
-    sock.connect((targetBluetoothMacAddress, port))
+def receiveMessages(name="rovian", uuid="d01ca4aa-c79d-43c5-94eb-a7fc4e7fa748"):
+    port = bluetooth.get_available_port( bluetooth.RFCOMM )
+    server_sock.bind(("", port))
+    server_sock.listen(1)
+    print("Listening on port {}".format(port))
 
-    print("Listening for connections...")
+    print("Listening for connections on {}...".format(
+        ':'.join(re.findall('..', '%012x' % uuid.getnode())).encode()
+    ))
 
-    import re, uuid 
-    print(':'.join(re.findall('..', '%012x' % uuid.getnode())).encode())
+    bluetooth.advertise_service( server_sock, name, uuid )
+    sock, address = server_sock.accept()
+    bluetooth.stop_advertising( sock )
+
+    print("Connected!\n   {}".format(address))
 
     data = sock.recv(1024)
     print("received {}".format(data))
 
     sock.close()
+    server_sock.close()
   
 def sendMessageTo(targetBluetoothMacAddress):
     port = 1
