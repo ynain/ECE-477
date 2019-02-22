@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import bluetooth as blt
 import traceback
 import struct
 import sys
@@ -84,9 +85,13 @@ def runPi(ipaddress='10.3.141.198', port=8000):
                     res = pi.readResults(connect=recv)
                     respass = pi.evaluateImages(res)
                     pi.sendResBluetooth(respass)
+                except blt.BluetoothError as bterr:
+                    traceback.print_exc()
+                    print("Bluetooth failed, connecting again")
+                    break
+
                 except Exception:
                     traceback.print_exc()
-                    print("Breaking")
                     break
             
                 if not send is None or not recv is None:
@@ -98,6 +103,7 @@ def runPi(ipaddress='10.3.141.198', port=8000):
         # if lost bluetooth, set blue to None reconnect, wait for start?
 
         # if lost server, send "l"ost, set conn to None reconnect, send "r"eady after
+        
         except Exception as e:
             traceback.print_exc()
 

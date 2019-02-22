@@ -45,7 +45,7 @@ def runStuff(wifiAddress=None, writeImagePath=None, rot=False):
 
 def runComp(writeImagePath=None, rot=False):
     
-    known = facecomp.readFaceEncodings(encode_path="./alt_trials/known_faces/")
+    known = facecomp.readFaceEncodings(encode_path="./src/alt_trials/known_faces/")
     
     # Make a socket connection that can be written to
     server_socket = socket.socket()
