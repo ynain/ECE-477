@@ -110,7 +110,7 @@ def runPi(ipaddress='10.3.141.198', port=8000):
 
             conn = client_socket.makefile('rb')
 
-            pi.runRead(connect=conn, ipaddress=ipaddress, port=8000)
+            print(pi.runRead(connect=conn, ipaddress=ipaddress, port=8000))
             conn.close()
 
         except Exception as e:
@@ -140,4 +140,4 @@ def findIPaddress():
 
 if __name__ == "__main__":
     # print(runStuff(wifiAddress='10.3.141.198', rot=True))
-    print(runStuff(wifiAddress='10.186.129.210', rot=True))
+    print(runStuff(wifiAddress='10.186.140.115', rot=True))
