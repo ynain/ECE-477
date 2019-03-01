@@ -15,7 +15,7 @@ import time
 import cv2
 import re, uuid
 
-def receiveMessages(name="rovian", uuid="d01ca4aa-c79d-43c5-94eb-a7fc4e7fa748"):
+def receiveMessages(name="rovian", uu_id="d01ca4aa-c79d-43c5-94eb-a7fc4e7fa748"):
     # get resources
     port = 1 # bluetooth.get_available_port( bluetooth.RFCOMM )
     server_sock = bluetooth.BluetoothSocket( bluetooth.RFCOMM )
@@ -25,8 +25,8 @@ def receiveMessages(name="rovian", uuid="d01ca4aa-c79d-43c5-94eb-a7fc4e7fa748"):
     server_sock.listen(1)
     print("Listening on port {}".format(port))
 
-    print("Advertising as {}\n with uuid {}".format(name, uuid))
-    bluetooth.advertise_service( server_sock, name, uuid )
+    print("Advertising as {}\n with uuid {}".format(name, uu_id))
+    bluetooth.advertise_service( server_sock, name, uu_id )
 
     print("Listening for connections on {}...".format(
         ':'.join(re.findall('..', '%012x' % uuid.getnode())).encode()
@@ -78,9 +78,8 @@ def lookUpNearbyBluetoothDevices(wanted):
     return res  # None if device wasn't found
     
 if __name__ == "__main__":
-    """
     # wanted = lookUpNearbyBluetoothDevices("Galaxy Note8")
-    wanted = lookUpNearbyBluetoothDevices("HC-05")
+    wanted = lookUpNearbyBluetoothDevices("rovian")
 
     print("\n\n")
     
@@ -94,5 +93,4 @@ if __name__ == "__main__":
             except Exception as e:
                 print(e)
                 print("Connection unsuccessful?")
-    """
     receiveMessages()
