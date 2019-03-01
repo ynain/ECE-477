@@ -16,16 +16,22 @@ import cv2
 import re, uuid
 
 def receiveMessages(name="rovian", uuid="d01ca4aa-c79d-43c5-94eb-a7fc4e7fa748"):
-    port = bluetooth.get_available_port( bluetooth.RFCOMM )
+    # get resources
+    port = 1 # bluetooth.get_available_port( bluetooth.RFCOMM )
+    server_sock = bluetooth.BluetoothSocket( bluetooth.RFCOMM )
+
+    # Setup connections
     server_sock.bind(("", port))
     server_sock.listen(1)
     print("Listening on port {}".format(port))
+
+    print("Advertising as {}\n with uuid {}".format(name, uuid))
+    bluetooth.advertise_service( server_sock, name, uuid )
 
     print("Listening for connections on {}...".format(
         ':'.join(re.findall('..', '%012x' % uuid.getnode())).encode()
     ))
 
-    bluetooth.advertise_service( server_sock, name, uuid )
     sock, address = server_sock.accept()
     bluetooth.stop_advertising( server_sock )
 
