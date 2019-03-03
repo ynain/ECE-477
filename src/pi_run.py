@@ -3,9 +3,13 @@
 import bluetooth as blt
 import socket
 import netifaces as ni
+import time
 import nmap
 
-from src.piCode.streamwrite import pi_client as pstr
+try:
+    from src.piCode.streamwrite import pi_client as pstr
+except:
+    from piCode.streamwrite import pi_client as pstr
 
 # WiFi/Internet
 def getServerConnection(ipaddress='10.3.141.198', port=8000):
@@ -46,22 +50,25 @@ def evaluateImages(res, thresh=0.75):
     else:               # No matches == multiple matches == doesn't pass
         return False
 
+# Bluetooth
 def sendResBluetooth(passing, bconn, good="p", bad="f"):
     if passing:
         sendBlueMessage(bconn, good) # send "p"ass
     else:
         sendBlueMessage(bconn, bad) # send ""
 
-# Bluetooth
-def lookUpNearbyBluetoothDevices(wanted):
+def lookUpNearbyBluetoothDevices(wanted, printOuts=False):
     res = []
 
-    print("Searching for Bluetooth devices...")
-    nearby = bluetooth.discover_devices(duration=4, lookup_names=True, flush_cache=True, lookup_class=False)
-    print("There are {} devices nearby:".format(len(nearby)))
+    if printOuts:
+        print("Searching for Bluetooth devices...")
+    nearby = blt.discover_devices(duration=8, lookup_names=True, flush_cache=True, lookup_class=False)
+    if printOuts:
+        print("There are {} devices nearby:".format(len(nearby)))
 
     for addr, name in nearby:
-        print("{} found at {}".format(name, addr)) 
+        if printOuts:
+            print("{} found at {}".format(name, addr)) 
         
         if name == wanted:
             res.append({"address": addr, "name": name})
@@ -69,7 +76,7 @@ def lookUpNearbyBluetoothDevices(wanted):
     return res  # None if device wasn't found
 
 # "98:D3:71:FD:50:9E" for HC-05, if not given, find dynamically
-def getBlueConnection(dname="HC-05", mac=None, port=1):
+def getBlueConnection(mac, dname="HC-05", port=1):
     # BluetoothError raised on Disconnect
     while mac is None:
         mac = lookUpNearbyBluetoothDevices(dname)
@@ -79,18 +86,37 @@ def getBlueConnection(dname="HC-05", mac=None, port=1):
 
     return sock
 
-
 def sendBlueMessage(bconn, message):
     bconn.send(message)
 
 def getBlueMessage(bconn):
+    data = ' '
     res = ''
 
-    while res[-1] != '\n':
+    while data[-1] != '\n':
+        time.sleep(.1)
         data = sock.recv(1024)
-        res+= data.decode('utf-8')
+
+        try:
+            data = data.decode('utf-8')
+        except:
+            continue
+        
+        # if newline not present, assume bad message
+        res += "".join(data.splitlines())
     
     return res
+
+def waitForBlueMessage(bconn, desired):
+    data = getBlueMessage(bconn)
+
+    while desired not in data:
+        time.sleep(.5)
+        print("~~~")
+        data = getBlueMessage(bconn)
+        print(data)
+    
+    return desired
 
 
 # IP address being dynamic... and slow
@@ -112,3 +138,20 @@ def findConnectedIPaddress():
 
     # If here, no idea what to do, default to Ian's Ubuntu?    
     return '10.3.141.198'
+
+if __name__ == "__main__":
+    # testing Bluetooth
+    # a = lookUpNearbyBluetoothDevices("HC-05", printOuts=True)
+    a = [{'address': '98:D3:71:FD:50:9E', 'name': 'HC-05'}]
+
+    if len(a):
+        a = a[0]
+        sock = getBlueConnection(a['address'], dname=a['name'])
+
+        print("sending message...")
+        sendBlueMessage(sock, "h")
+        print("getting message...")
+        mess = waitForBlueMessage(sock, 'boot')
+        print(mess)
+    else:
+        print("Badness, HC-05 not found")

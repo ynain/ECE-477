@@ -140,4 +140,4 @@ def findIPaddress():
 
 if __name__ == "__main__":
     # print(runStuff(wifiAddress='10.3.141.198', rot=True))
-    print(runStuff(wifiAddress='10.186.140.115', rot=True))
+    print(runStuff(wifiAddress='10.186.133.159', rot=True))

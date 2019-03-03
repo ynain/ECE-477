@@ -47,8 +47,22 @@ def sendAndReceive(message, looped=True):
     sock.connect((BD_ADDR, port))
     print("Connected")
 
+    msg = ''
     signal.signal(signal.SIGINT, closeSocket(sock))
 
+    
+    while True:
+        data = (sock.recv(16)).decode('utf-8')
+        msg += data
+        #print(msg)
+        if msg[-1] == '\n':
+            break
+
+    print(msg)
+    if msg.strip() == 'boot':
+        sock.send('c')
+
+    '''
     sock.send(message)
     #print('sent?')
     #time.sleep()
@@ -64,6 +78,7 @@ def sendAndReceive(message, looped=True):
             break
 
     print(msg)
+    '''
     sock.close()
 
         

@@ -68,13 +68,16 @@ def runPi(ipaddress='10.3.141.198', port=8000):
             if blue is None:
                 pass
                 # connect to Bluetooth
-                bsock = getBlueConnection(mac="98:D3:71:FD:50:9E")
-                # wait for "boot\n"?
+                bsock = blt.getBlueConnection(mac="98:D3:71:FD:50:9E")
 
             if conn is None:
+                # wait for "boot\n"?
+                print(blt.waitForBlueMessage(bsock, "boot"))
                 # connect to server
                 conn = pi.getServerConnection(ipaddress=ipaddress)
                 # send ready after
+                sendBlueMessage()
+                
 
             while command != 'quit':
                 send = recv = None
