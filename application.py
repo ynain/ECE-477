@@ -66,7 +66,6 @@ def runPi(ipaddress='10.3.141.198', port=8000):
     while command != 'quit':
         try:
             if bsock is None:
-                pass
                 # connect to Bluetooth
                 bsock = pi.getBlueConnection(mac="98:D3:71:FD:50:9E")
 
@@ -101,17 +100,17 @@ def runPi(ipaddress='10.3.141.198', port=8000):
                     respass = pi.evaluateImages(res)
                     pi.sendResBluetooth(respass)
 
-                """
-                except blt.BluetoothError as bterr:
-                    traceback.print_exc()
-                    print("Bluetooth failed, connecting again")
-                    try:
-                        bsock.close()
-                    except:
-                        print("Bluetooth already disconnected")
-                        bsock = None
-                    break
-                """
+                    """
+                    except blt.BluetoothError as bterr:
+                        traceback.print_exc()
+                        print("Bluetooth failed, connecting again")
+                        try:
+                            bsock.close()
+                        except:
+                            print("Bluetooth already disconnected")
+                            bsock = None
+                        break
+                    """
 
                 except Exception:
                     traceback.print_exc()
