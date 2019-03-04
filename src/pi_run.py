@@ -57,12 +57,12 @@ def sendResBluetooth(passing, bconn, good="p", bad="f"):
     else:
         sendBlueMessage(bconn, bad) # send ""
 
-def lookUpNearbyBluetoothDevices(wanted, printOuts=False):
+def lookUpNearbyBluetoothDevices(wanted, timeout=4, printOuts=False):
     res = []
 
     if printOuts:
         print("Searching for Bluetooth devices...")
-    nearby = blt.discover_devices(duration=8, lookup_names=True, flush_cache=True, lookup_class=False)
+    nearby = blt.discover_devices(duration=timeout, lookup_names=True, flush_cache=True, lookup_class=False)
     if printOuts:
         print("There are {} devices nearby:".format(len(nearby)))
 
@@ -107,16 +107,23 @@ def getBlueMessage(bconn):
     
     return res
 
-def waitForBlueMessage(bconn, desired):
+# set timeout to 0 at your own peril
+def waitForBlueMessage(bconn, desired, timeout=10):
     data = getBlueMessage(bconn)
+    i = 0
 
-    while desired not in data:
+    while desired not in data and i != timeout:
         time.sleep(.5)
         print("~~~")
         data = getBlueMessage(bconn)
         print(data)
+
+        i += 1
     
-    return desired
+    if i == timeout:
+        return None
+    else:
+        return desired
 
 
 # IP address being dynamic... and slow
@@ -151,7 +158,27 @@ if __name__ == "__main__":
         print("sending message...")
         sendBlueMessage(sock, "h")
         print("getting message...")
-        mess = waitForBlueMessage(sock, 'boot')
+        mess = waitForBlueMessage(sock, 'boot', timeout=5)
         print(mess)
+
+        if mess is None:
+            mess = waitForBlueMessage(sock, 'start', timeout=5)
+            print("Adjusting for already starting...\n{}".format(mess))
+
+        if mess == "boot":
+            sendBlueMessage(sock, "c")
+        elif mess == "start":
+            sned = ""
+            while sned not in ['l', 'p', 'f']:
+                sned = input("Please insert L, P, or F for a \n"+
+                    "Lost, Passed, or Failed message prompt\n  ").lower()
+                
+            sendBlueMessage(sock, sned)
+
+            print(getBlueMessage(sock))
+            sock.close()
+        """
+        """
+        
     else:
         print("Badness, HC-05 not found")

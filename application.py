@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import bluetooth as blt
+#import bluetooth as blt
 import traceback
 import struct
 import sys
@@ -62,36 +62,56 @@ def runPi(ipaddress='10.3.141.198', port=8000):
 
     command = ''
     conn = None
-    blue = None
+    bsock = None
     while command != 'quit':
         try:
-            if blue is None:
+            if bsock is None:
                 pass
                 # connect to Bluetooth
-                bsock = blt.getBlueConnection(mac="98:D3:71:FD:50:9E")
+                bsock = pi.getBlueConnection(mac="98:D3:71:FD:50:9E")
 
             if conn is None:
-                # wait for "boot\n"?
-                print(blt.waitForBlueMessage(bsock, "boot"))
+                # wait for "boot\n"? Also, testing, HC-05 stuck in stasis
+                while pi.waitForBlueMessage(bsock, "start") != "start": # "boot") != "boot":
+                    continue
                 # connect to server
                 conn = pi.getServerConnection(ipaddress=ipaddress)
                 # send ready after
-                sendBlueMessage()
+                pi.sendBlueMessage(sock, "c")
                 
 
             while command != 'quit':
-                send = recv = None
+                send = recv = None                
                 try:
+                    found = None
+                    while found is None:
+                        found = pi.waitForBlueMessage(bsock, "start", timeout=4)
+                        if found is None:
+                            found = pi.waitForBlueMessage(bsock, "lowpwr", timeout=4)
+                    
+                    if found == "lowpwr":
+                        bsock.close()
+                        bsock.close()
+                        break
+
                     send, recv = pi.getWriteSocs(conn)
                     pi.sendFrames(connect=send)
 
                     res = pi.readResults(connect=recv)
                     respass = pi.evaluateImages(res)
                     pi.sendResBluetooth(respass)
+
+                """
                 except blt.BluetoothError as bterr:
                     traceback.print_exc()
                     print("Bluetooth failed, connecting again")
+                    try:
+                        bsock.close()
+                    except:
+                        print("Bluetooth already disconnected")
+                        bsock = None
                     break
+                """
 
                 except Exception:
                     traceback.print_exc()
