@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+
 
 import face_recognition
 import numpy as np
