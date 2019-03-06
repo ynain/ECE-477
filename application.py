@@ -71,12 +71,12 @@ def runPi(ipaddress='10.3.141.198', port=8000):
 
             if conn is None:
                 # wait for "boot\n"? Also, testing, HC-05 stuck in stasis
-                while pi.waitForBlueMessage(bsock, "start") != "start": # "boot") != "boot":
+                while not pi.waitForBlueMessage(bsock, "boot")[0] and not pi.waitForBlueMessage(bsock, "start")[0]:
                     continue
                 # connect to server
                 conn = pi.getServerConnection(ipaddress=ipaddress)
                 # send ready after
-                pi.sendBlueMessage(sock, "c")
+                pi.sendBlueMessage(bsock, "c")
                 
 
             while command != 'quit':
@@ -84,33 +84,34 @@ def runPi(ipaddress='10.3.141.198', port=8000):
                 try:
                     found = None
                     while found is None:
-                        found = pi.waitForBlueMessage(bsock, "start", timeout=4)
-                        if found is None:
-                            found = pi.waitForBlueMessage(bsock, "lowpwr", timeout=4)
+                        success, found = pi.waitForBlueMessage(bsock, "start", timeout=4)
+                        if not success:
+                            success, found = pi.waitForBlueMessage(bsock, "lowpwr", timeout=4)
                     
-                    if found == "lowpwr":
-                        bsock.close()
-                        bsock.close()
-                        break
-
-                    send, recv = pi.getWriteSocs(conn)
-                    pi.sendFrames(connect=send)
-
-                    res = pi.readResults(connect=recv)
-                    respass = pi.evaluateImages(res)
-                    pi.sendResBluetooth(respass)
-
-                    """
-                    except blt.BluetoothError as bterr:
-                        traceback.print_exc()
-                        print("Bluetooth failed, connecting again")
-                        try:
+                    if success:
+                        if found == "lowpwr":
                             bsock.close()
-                        except:
-                            print("Bluetooth already disconnected")
-                            bsock = None
-                        break
-                    """
+                            bsock.close()
+                            break
+
+                        send, recv = pi.getWriteSocs(conn)
+                        pi.sendFrames(connect=send)
+
+                        res = pi.readResults(connect=recv)
+                        respass = pi.evaluateImages(res)
+                        pi.sendResBluetooth(respass, bsock)
+
+                        """
+                        except blt.BluetoothError as bterr:
+                            traceback.print_exc()
+                            print("Bluetooth failed, connecting again")
+                            try:
+                                bsock.close()
+                            except:
+                                print("Bluetooth already disconnected")
+                                bsock = None
+                            break
+                        """
 
                 except Exception:
                     traceback.print_exc()
@@ -130,13 +131,15 @@ def runPi(ipaddress='10.3.141.198', port=8000):
             traceback.print_exc()
 
         finally:
+            if command == 'quit':
+                break
             command = input("Main connection failure, type 'quit' not to retry\n")
 
     print("{} entered".format(command))
 
 if __name__ == "__main__":
     if OnPi:
-        runPi(ipaddress='10.3.141.198')
+        runPi(ipaddress='10.186.130.115')
         # runPi(ipaddress='10.186.129.210')
     else:
         runComputer(rot=True)

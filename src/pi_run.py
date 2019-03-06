@@ -42,8 +42,9 @@ def evaluateImages(res, thresh=0.75):
     passing = 0
 
     for key in res:
-        if res[key] > thresh:
-            pasing += 1
+        if res[key] is not None and res[key] > thresh:
+            print("{} passed".format(key))
+            passing += 1
         
     if passing == 1:    # if one person matches
         return True
@@ -95,7 +96,7 @@ def getBlueMessage(bconn):
 
     while data[-1] != '\n':
         time.sleep(.1)
-        data = sock.recv(1024)
+        data = bconn.recv(1024)
 
         try:
             data = data.decode('utf-8')
@@ -107,23 +108,22 @@ def getBlueMessage(bconn):
     
     return res
 
-# set timeout to 0 at your own peril
-def waitForBlueMessage(bconn, desired, timeout=10):
+# set timeout to <0 at your own peril
+def waitForBlueMessage(bconn, desired, timeout=3):
     data = getBlueMessage(bconn)
     i = 0
+    found = False
 
-    while desired not in data and i != timeout:
+    while (not found) and (not i == timeout):
         time.sleep(.5)
         print("~~~")
         data = getBlueMessage(bconn)
-        print(data)
+        found = desired in data
+        print("`{}` vs wanted `{}`".format(data, desired))
 
         i += 1
     
-    if i == timeout:
-        return None
-    else:
-        return desired
+    return (found, desired)
 
 
 # IP address being dynamic... and slow
