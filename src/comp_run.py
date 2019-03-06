@@ -6,9 +6,16 @@ import socket
 import datetime
 
 
-from src.alt_trials import mapfaceEncodings as fmap
-from src.piCode.streamwrite import computer_server as cstr
-import src.rotateImages as rotate
+try:
+    from src.alt_trials import mapfaceEncodings as fmap
+    from src.piCode.streamwrite import computer_server as cstr
+    import src.rotateImages as rotate
+    from src import helpers as h
+except:
+    from alt_trials import mapfaceEncodings as fmap
+    from piCode.streamwrite import computer_server as cstr
+    import rotateImages as rotate
+    import helpers as h
 
 def getKnownFaces(encode_path="./src/alt_trials/known_faces/"):
     return fmap.readFaceEncodings(encode_path=encode_path)
@@ -65,9 +72,11 @@ def sendResults(res, connect=None, ipaddress='0.0.0.0', port='8000', log=False):
     cstr.sendResult(res, connect=connect, ipaddress=ipaddress, port=port, log=log)
 
 def closeConnection(connect):
-    connect.close()
+    h.closeAll([connect])
     print("Main connection closed")
 
 def closeWriteSocs(send, recv):
-    send.close()
-    recv.close()
+    h.closeAll([send, recv])
+
+def closeAllSocs(conn, send, recv):
+    h.closeAll([conn, send, recv])
