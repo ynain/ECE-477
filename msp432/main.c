@@ -84,15 +84,15 @@ void main(void) {
 
     MAP_Interrupt_enableMaster();
 
-
-    //GPIO_Init();
+    GPIO_Init();
 
     setup_bluetooth_state();
 
 
-
-
     while(1) {
+
+
+        GPIO_status();
 /*
         int i;
         for(i = 1; i < 5500; i++){
@@ -107,7 +107,8 @@ void main(void) {
          * Note: please don't delete the following code.
          * It's a pretty solid prototype, but it s
          * */
-
+// Commented out for keypad testing, just temporary.
+/*
         while(!connected){
             // send boot signal to pi
             printf("Connection status: %d\n", get_state_status());
@@ -124,7 +125,8 @@ void main(void) {
             } else printf("waiting for response from pi...\n");
         }
 
-        if(1/*1 for now. later: check if button D is pressed*/) {
+        //1 for now. later: check if button D is pressed
+        if(1) {
             MSPrintf(EUSCI_A2_BASE, " start\n", BUFFER_SIZE);
             UART_Read(EUSCI_A2_BASE, (uint8_t*)&c, 1);
             if(c == 'l') {
@@ -146,7 +148,7 @@ void main(void) {
             }
             else printf("unrecognized input...\n");
         }
-
+*/
 
        /* if(UART_Read(EUSCI_A2_BASE, (uint8_t*)&c, 1) != 0) {
             //printf("c is %c\n", c);

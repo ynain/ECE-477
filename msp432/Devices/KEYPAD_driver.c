@@ -43,21 +43,21 @@ void GPIO_Init(void) {
 
     for (i = 0; i < ROW; i++){
         MAP_GPIO_setAsOutputPin(ButtonKeys[i].port, ButtonKeys[i].pin);
-        MAP_GPIO_clearInterruptFlag(ButtonKeys[i].port, ButtonKeys[i].pin);
-        MAP_GPIO_enableInterrupt(ButtonKeys[i].port, ButtonKeys[i].pin);
-        GPIO_setOutputHighOnPin(ButtonKeys[i].port, ButtonKeys[i].pin);
+        //MAP_GPIO_clearInterruptFlag(ButtonKeys[i].port, ButtonKeys[i].pin);
+        //MAP_GPIO_enableInterrupt(ButtonKeys[i].port, ButtonKeys[i].pin);
+        //GPIO_setOutputHighOnPin(ButtonKeys[i].port, ButtonKeys[i].pin);
     }
 
     for (i=4; i<COL+4; i++) {
-        MAP_GPIO_setAsInputPin(ButtonKeys[i].port, ButtonKeys[i].pin);
-        MAP_GPIO_clearInterruptFlag(ButtonKeys[i].port, ButtonKeys[i].pin);
-        MAP_GPIO_enableInterrupt(ButtonKeys[i].port, ButtonKeys[i].pin);
+        GPIO_setAsInputPin(ButtonKeys[i].port, ButtonKeys[i].pin);
+        //MAP_GPIO_clearInterruptFlag(ButtonKeys[i].port, ButtonKeys[i].pin);
+        //MAP_GPIO_enableInterrupt(ButtonKeys[i].port, ButtonKeys[i].pin);
 
     }
 
     //MAP_Interrupt_enableInterrupt(INT_PORT2);
     //MAP_Interrupt_enableInterrupt(INT_PORT5);
-    MAP_Interrupt_enableInterrupt(INT_PORT6);
+    //MAP_Interrupt_enableInterrupt(INT_PORT6);
 
     printf("GPIO Init \n");
 
@@ -67,7 +67,11 @@ void PORT6_IRQHandler(void){
 
     // get the port status
     uint32_t status = GPIO_getEnabledInterruptStatus(GPIO_PORT_P6);
-    if(status != -0){
+    GPIO_clearInterruptFlag(GPIO_PORT_P6, status);
+
+    MAP_Interrupt_disableInterrupt(INT_PORT6);
+
+    if(status != 0){
         printf("port 6 %x \n", status);
     }
 
@@ -85,10 +89,10 @@ void PORT6_IRQHandler(void){
         for(j = 0; j < 4; j ++){
             int pin_value;
             pin_value = GPIO_getInputPinValue(6, ButtonKeys[j + 4].pin);
-            printf("pin value %d %d %d\n", i,j,pin_value);
+            //printf("pin value %d %d %d\n", i,j,pin_value);
 
             if(pin_value){
-                printf(ButtonKeys[i].pin);
+                printf("pin value %d %d %d\n", i,j,pin_value);
             }
         }
 
@@ -99,7 +103,7 @@ void PORT6_IRQHandler(void){
         GPIO_setOutputHighOnPin(ButtonKeys[i].port, ButtonKeys[i].pin);
     }
 
-    MAP_GPIO_clearInterruptFlag(GPIO_PORT_P2, status);
+    MAP_Interrupt_enableInterrupt(INT_PORT6);
 }
 
 
@@ -108,6 +112,7 @@ void GPIO_status(void) {
     int i;
     int j;
     int pin_value;
+
 
     for (i = 0; i < ROW; i++){
 
@@ -127,3 +132,4 @@ void GPIO_status(void) {
     }
 
 }
+
