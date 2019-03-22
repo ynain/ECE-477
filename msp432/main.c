@@ -84,15 +84,20 @@ void main(void) {
 
     MAP_Interrupt_enableMaster();
 
-    GPIO_Init();
+    //GPIO_Init();
 
     setup_bluetooth_state();
+
+    MAP_SysTick_enableModule();
+    MAP_SysTick_setPeriod(1500000);
+    MAP_Interrupt_enableSleepOnIsrExit();
+    MAP_SysTick_enableInterrupt();
 
 
     while(1) {
 
 
-        GPIO_status();
+        //GPIO_status();
 /*
         int i;
         for(i = 1; i < 5500; i++){
@@ -108,7 +113,7 @@ void main(void) {
          * It's a pretty solid prototype, but it s
          * */
 // Commented out for keypad testing, just temporary.
-/*
+
         while(!connected){
             // send boot signal to pi
             if (get_state_status()) {
@@ -126,9 +131,10 @@ void main(void) {
                 } else printf("waiting for response from pi...\n");
 
             } else {
-                printf("Waiting for a connection...");
+                printf("Waiting for a connection...\n");
             }
         }
+
 
         if (!get_state_status()) {
             connected = False;
@@ -156,7 +162,7 @@ void main(void) {
             }
             else printf("unrecognized input...\n");
         }
-*/
+
 
        /* if(UART_Read(EUSCI_A2_BASE, (uint8_t*)&c, 1) != 0) {
             //printf("c is %c\n", c);
