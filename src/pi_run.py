@@ -8,8 +8,10 @@ import nmap
 
 try:
     from src.piCode.streamwrite import pi_client as pstr
+    from src import helpers as h
 except:
     from piCode.streamwrite import pi_client as pstr
+    import helpers as h
 
 # WiFi/Internet
 def getServerConnection(ipaddress='10.3.141.198', port=8000):
@@ -31,11 +33,13 @@ def readResults(connect=None, ipaddress='10.3.141.198', port=8000):
     return pstr.runRead(connect=connect, ipaddress=ipaddress, port=8000)
 
 def closeWriteSocs(send, recv):
-    send.close()
-    recv.close()
+    h.closeAll([send, recv])
 
 def closeConnection(connection):
-    connection.close()
+    h.closeAll([connection])
+
+def closeAllSocs(conn, send, recv):
+    h.closeAll([conn, send, recv])
 
 # Result Evaluation
 def evaluateImages(res, thresh=0.75):
@@ -145,6 +149,9 @@ def findConnectedIPaddress():
 
     # If here, no idea what to do, default to Ian's Ubuntu?    
     return '10.3.141.198'
+
+def closeBluetoothConnection(bconn):
+    h.closeAll([bconn])
 
 if __name__ == "__main__":
     # testing Bluetooth

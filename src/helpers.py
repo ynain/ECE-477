@@ -3,19 +3,22 @@
 import signal
 import sys
 
-def closeSocket(conn, recv, send):
+def catchInterruptClose(conn, recv, send):
     def signal_handler(sig, frame):
         print("\nCtrl+C signal sensed!\nClosing the socket...")
         
-        for el in [conn, recv, send]:
-            try:
-                el.close()
-            except Exception as e:
-                print("Possibly already closed...")
-            finally:
-                print("")
+        closeAll([conn, recv, send])
 
         print("All closed. Buh-bye!")
         sys.exit(0)
 
     signal.signal(signal.SIGINT, signal_handler)
+
+def closeAll(els):
+    for el in els:
+        try:
+            el.close()
+        except Exception as e:
+            print("Possibly already closed...")
+        finally:
+            print("")

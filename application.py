@@ -31,7 +31,7 @@ def runComputer(writeImagePath=None, rot=False):
             send = recv = None
             try:
                 send, recv = cr.getWriteSocs(conn)
-                h.closeSocket(conn, recv, send)
+                h.catchInterruptClose(conn, recv, send)
 
                 images = cr.getImages(connect=recv, log=False)
 
@@ -47,6 +47,12 @@ def runComputer(writeImagePath=None, rot=False):
                     res = cr.getResults(images, known)
 
                     cr.sendResults(res, connect=send, log=False)
+            
+            except socket.error as serror:
+                traceback.print_exc()
+                cr.closeAllSocs(conn, recv, send)
+
+            
             except Exception:
                 traceback.print_exc()
                 print("Breaking")
@@ -90,30 +96,40 @@ def runPi(ipaddress='10.3.141.198', port=8000):
                     
                     if success:
                         if found == "lowpwr":
-                            bsock.close()
-                            bsock.close()
+                            pi.closeBluetoothConnection(bsock)
                             break
 
                         send, recv = pi.getWriteSocs(conn)
+                        pi.catchInterruptClose(conn, recv, send)
                         pi.sendFrames(connect=send)
 
                         res = pi.readResults(connect=recv)
                         respass = pi.evaluateImages(res)
                         pi.sendResBluetooth(respass, bsock)
 
-                        """
-                        except blt.BluetoothError as bterr:
-                            traceback.print_exc()
-                            print("Bluetooth failed, connecting again")
-                            try:
-                                bsock.close()
-                            except:
-                                print("Bluetooth already disconnected")
-                                bsock = None
-                            break
-                        """
+                except blt.BluetoothError as bterr:
+                    # if lost bluetooth, set blue to None, reconnect, wait for start/boot?
+                    traceback.print_exc()
+                    print("Bluetooth failed, connecting again")
+                    
+                    pi.closeBluetoothConnection(bsock)
 
-                except Exception:
+                    bsock = None
+                    break
+
+                except socket.error as serror:
+                    # if lost server, send "l"ost, set conn to None reconnect, send "r"eady after
+                    traceback.print_exc()
+                    pi.sendBlueMessage(bsock, "l")
+                    
+                    # try to healthily close everything
+                    pi.closeAllSocs(conn, recv, send)
+                    
+                    conn = None
+                    break
+                    
+
+                except Exception as e:
                     traceback.print_exc()
                     break
             
@@ -123,9 +139,7 @@ def runPi(ipaddress='10.3.141.198', port=8000):
                 command = input("Type anything to send images again,\n or 'quit' to quit\n")
             pi.closeConnection(conn)
         
-        # if lost bluetooth, set blue to None reconnect, wait for start?
 
-        # if lost server, send "l"ost, set conn to None reconnect, send "r"eady after
         
         except Exception as e:
             traceback.print_exc()
