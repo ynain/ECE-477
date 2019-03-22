@@ -110,18 +110,23 @@ void main(void) {
 
         while(!connected){
             // send boot signal to pi
-            printf("Connection status: %d\n", get_state_status());
-            if(!bootInit) {
-                MSPrintf(EUSCI_A2_BASE, "boot\n", BUFFER_SIZE);
-                printf("sending boot signal...\n");
+            if (get_state_status()) {
+                printf("Connection status good\n");
+                if(!bootInit) {
+                    MSPrintf(EUSCI_A2_BASE, "boot\n", BUFFER_SIZE);
+                    printf("sending boot signal...\n");
+                }
+                if(UART_Read(EUSCI_A2_BASE, (uint8_t*)&c, 1) != 0){
+                    if(c == 'c') {
+                        printf("connected successfully\n");
+                        connected = True;
+                        bootInit = True;
+                    } else printf("pi is responding, still trying to connect...\n");
+                } else printf("waiting for response from pi...\n");
+
+            } else {
+                printf("Waiting for a connection...");
             }
-            if(UART_Read(EUSCI_A2_BASE, (uint8_t*)&c, 1) != 0){
-                if(c == 'c') {
-                    printf("connected successfully\n");
-                    connected = True;
-                    bootInit = True;
-                } else printf("pi is responding, still trying to connect...\n");
-            } else printf("waiting for response from pi...\n");
         }
 
         if (!get_state_status()) {
