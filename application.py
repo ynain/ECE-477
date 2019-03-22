@@ -1,15 +1,10 @@
-#!/usr/bin/env python3
 
-import os
+
+#import bluetooth as blt
+import traceback
+import struct
 import sys
-import datetime
-import cv2
-import socket
-import shutil
-import nmap
-import netifaces as ni
-
-import rotateImages as rotate
+import os
 
 # Project is built using Python 3.5+, please comply
 if sys.version_info[0] < 3:
@@ -17,120 +12,148 @@ if sys.version_info[0] < 3:
              '''Please comply or this won't work properly'''
              )
 
-
-# Imports specific to Pi or Not Pi
 compsystem = os.uname()
 OnPi = compsystem.nodename == 'raspberrypi'
 
 if OnPi:
-    from piCode.streamwrite import pi_client as pi
-    WIFI = 'wlan0'
+    import src.pi_run as pi
 else:
-    WIFI = None # wifi function won't work if not on Pi
-    from alt_trials import mapfaceEncodings as facecomp
-    from piCode.streamwrite import computer_server as comp
-
-
-def runStuff(wifiAddress=None, writeImagePath=None, rot=False):
-    compsystem = os.uname()
+    import src.comp_run as cr
     
-    if OnPi:
-        if wifiAddress is None:
-            wifiAddress = findIPaddress()
-        runPi(ipaddress=wifiAddress)
-    else:
-        runComp(writeImagePath=writeImagePath, rot=rot)
+import src.helpers as h
 
-    return compsystem.nodename
+def runComputer(writeImagePath=None, rot=False):
+    known = cr.getKnownFaces()
+    while True:
+        conn, _ = cr.getServerConnection()
 
-def runComp(writeImagePath=None, rot=False):
-    
-    known = facecomp.readFaceEncodings(encode_path="./alt_trials/known_faces/")
-    
-    # Make a socket connection that can be written to
-    server_socket = socket.socket()
-    server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    server_socket.bind(('0.0.0.0', 8000))
-    server_socket.listen(0)
+        while True:
+            send = recv = None
+            try:
+                send, recv = cr.getWriteSocs(conn)
+                h.catchInterruptClose(conn, recv, send)
 
-    print("Computer server running")
+                images = cr.getImages(connect=recv, log=False)
 
-    # Accept a single connection and make a file-like object out of it
-    conn, addr = server_socket.accept()
-    connect = conn.makefile('rb')
+                # For our orientation during testing, images need to be corrected
+                # The face_recognition library can't see faces that aren't upright
+                if rot:
+                    images = cr.rotList(images)
 
-    # Run as a server and allow for face images to be downloaded
-    images = comp.getImages(connect=connect, ipaddress='0.0.0.0', port='8000')
-    
-    connect.close()
-    
-    # For our orientation during testing, images need to be corrected
-    # The face_recognition library can't see faces that aren't upright
-    if rot:
-        images = rotate.rotList(images)
+                if not writeImagePath is None:
+                    cr.writeImages(images, writeImagePath)
+                
+                if len(images):
+                    res = cr.getResults(images, known)
 
-    # If we desire to write images to a file location, this writes those files
-    if not writeImagePath is None:
-        if not os.path.exists(writeImagePath):
-            os.makedirs(writeImagePath)
+                    cr.sendResults(res, connect=send, log=False)
             
-        now = datetime.datetime.today().strftime('%Y-%m-%d_%H-%M-%S')
+            except socket.error as serror:
+                traceback.print_exc()
+                cr.closeAllSocs(conn, recv, send)
 
-        for i in range(len(images)):
-            cv2.imwrite(os.path.join(writeImagePath, "frame{}_{}.jpg".format(i, now)), images[i])
+            
+            except Exception:
+                traceback.print_exc()
+                print("Breaking")
+                break
+            
+            if not send is None or not recv is None:
+                cr.closeWriteSocs(send, recv)
+        
+        cr.closeConnection(conn)
     
-    # get image features (of the largest face)
-    img_feats = facecomp.turnImagesToFeats(images)
-
-    # find if it compares to any of the 
-    res = facecomp.compareListToKnown(img_feats, compknown=known)
-
-    # Connect to the pi again
-    connect = conn.makefile('wb')
-    # Send results to Pi
-    comp.sendResult(res, connect=connect, ipaddress='0.0.0.0', port='8000')
-    connect.close()
-
-    # print(res)
-    conn.close()
-
-    server_socket.close()
-
 def runPi(ipaddress='10.3.141.198', port=8000):
     print("Pi Pie Phi guy running")
 
     command = ''
+    conn = None
+    bsock = None
     while command != 'quit':
         try:
-            client_socket = socket.socket()
-            client_socket.connect((ipaddress, port))
-            pi.runConnect(connect=client_socket, ipaddress=ipaddress, port=8000)
+            if bsock is None:
+                # connect to Bluetooth
+                bsock = pi.getBlueConnection(mac="98:D3:71:FD:50:9E")
 
-            pi.runRead(connect=client_socket, ipaddress=ipaddress, port=8000)
-        except Exception as e:
-            print(e)
-        finally:
-            command = input("Type 'quit' to exit this process\n")
-            client_socket.close()
+            if conn is None:
+                # wait for "boot\n"? Also, testing, HC-05 stuck in stasis
+                while not pi.waitForBlueMessage(bsock, "boot")[0] and not pi.waitForBlueMessage(bsock, "start")[0]:
+                    continue
+                # connect to server
+                conn = pi.getServerConnection(ipaddress=ipaddress)
+                # send ready after
+                pi.sendBlueMessage(bsock, "c")
+                
 
-def findIPaddress():
-    if not WIFI is None:
-        ip = ni.ifaddresses(WIFI)[ni.AF_INET][0]['addr']
-        nm = nmap.PortScanner()
+            while command != 'quit':
+                send = recv = None                
+                try:
+                    found = None
+                    while found is None:
+                        success, found = pi.waitForBlueMessage(bsock, "start", timeout=4)
+                        if not success:
+                            success, found = pi.waitForBlueMessage(bsock, "lowpwr", timeout=4)
+                    
+                    if success:
+                        if found == "lowpwr":
+                            pi.closeBluetoothConnection(bsock)
+                            break
 
-        nm.scan(ip+"/24")
-        hosts = nm.all_hosts()
-        print(hosts)
+                        send, recv = pi.getWriteSocs(conn)
+                        pi.catchInterruptClose(conn, recv, send)
+                        pi.sendFrames(connect=send)
 
-        while ip in hosts:
-            hosts.remove(ip)
+                        res = pi.readResults(connect=recv)
+                        respass = pi.evaluateImages(res)
+                        pi.sendResBluetooth(respass, bsock)
+
+                except blt.BluetoothError as bterr:
+                    # if lost bluetooth, set blue to None, reconnect, wait for start/boot?
+                    traceback.print_exc()
+                    print("Bluetooth failed, connecting again")
+                    
+                    pi.closeBluetoothConnection(bsock)
+
+                    bsock = None
+                    break
+
+                except socket.error as serror:
+                    # if lost server, send "l"ost, set conn to None reconnect, send "r"eady after
+                    traceback.print_exc()
+                    pi.sendBlueMessage(bsock, "l")
+                    
+                    # try to healthily close everything
+                    pi.closeAllSocs(conn, recv, send)
+                    
+                    conn = None
+                    break
+                    
+
+                except Exception as e:
+                    traceback.print_exc()
+                    break
+            
+                if not send is None or not recv is None:
+                    pi.closeWriteSocs(send, recv)
+            
+                command = input("Type anything to send images again,\n or 'quit' to quit\n")
+            pi.closeConnection(conn)
         
-        print(hosts)
-        if len(hosts):
-            return hosts[0] # No good way to tell if > 1... cross fingers
 
-    # If here, no idea what to do, default to Ian's Ubuntu?    
-    return '10.3.141.198'
+        
+        except Exception as e:
+            traceback.print_exc()
+
+        finally:
+            if command == 'quit':
+                break
+            command = input("Main connection failure, type 'quit' not to retry\n")
+
+    print("{} entered".format(command))
 
 if __name__ == "__main__":
-    print(runStuff(ipaddress='10.3.141.198', rot=True))
+    if OnPi:
+        runPi(ipaddress='10.186.130.115')
+        # runPi(ipaddress='10.186.129.210')
+    else:
+        runComputer(rot=True)

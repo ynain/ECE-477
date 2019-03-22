@@ -24,5 +24,9 @@ face
 nonet
 .vscode
 
-# Python testing files? #
+# Python files #
 __pycache__
+*.pyc
+
+# Ignoring vim files
+*.swp
