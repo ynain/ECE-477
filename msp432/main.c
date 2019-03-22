@@ -124,7 +124,10 @@ void main(void) {
             } else printf("waiting for response from pi...\n");
         }
 
-        if(1/*1 for now. later: check if button D is pressed*/) {
+        if (!get_state_status()) {
+            connected = False;
+        }
+        else if(1/*1 for now. later: check if button D is pressed*/) {
             MSPrintf(EUSCI_A2_BASE, " start\n", BUFFER_SIZE);
             UART_Read(EUSCI_A2_BASE, (uint8_t*)&c, 1);
             if(c == 'l') {
