@@ -104,11 +104,11 @@ def getBlueMessage(bconn):
 
         try:
             data = data.decode('utf-8')
+            # if newline not present, assume bad message
+            res += "".join(data.splitlines())
         except:
             continue
         
-        # if newline not present, assume bad message
-        res += "".join(data.splitlines())
     
     return res
 

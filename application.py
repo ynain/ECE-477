@@ -2,6 +2,7 @@
 
 #import bluetooth as blt
 import traceback
+import socket
 import struct
 import sys
 import os
