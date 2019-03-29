@@ -4,7 +4,7 @@
  *  Created on: Feb 24, 2019
  *      Author: 477grp2
  */
-#include "timer.h"
+#include <Headers/timer.h>
 
 #include <ti/devices/msp432p4xx/driverlib/driverlib.h>
 #include <ti/devices/msp432p4xx/driverlib/interrupt.h>

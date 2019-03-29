@@ -96,24 +96,6 @@ void main(void) {
 
     while(1) {
 
-
-        //GPIO_status();
-/*
-        int i;
-        for(i = 1; i < 5500; i++){
-            printf("nope \n");
-        } */
-
-        /* Evan: we need software interrupts for the keypad access
-         * or threading.
-         * whatever is easier.
-         *
-         *
-         * Note: please don't delete the following code.
-         * It's a pretty solid prototype, but it s
-         * */
-// Commented out for keypad testing, just temporary.
-
         while(!connected){
             // send boot signal to pi
             if (get_state_status()) {
@@ -163,24 +145,6 @@ void main(void) {
             else printf("unrecognized input...\n");
         }
 
-
-       /* if(UART_Read(EUSCI_A2_BASE, (uint8_t*)&c, 1) != 0) {
-            //printf("c is %c\n", c);
-            switch(c){
-                    case 'P': MSPrintf(EUSCI_A2_BASE, " Face Passed\n", BUFFER_SIZE);
-                                break;
-                    case 'F': MSPrintf(EUSCI_A2_BASE, " Face Failed\n", BUFFER_SIZE);
-                                break;
-                    case 'R': MSPrintf(EUSCI_A2_BASE, " Ready for Face Recognition\n", BUFFER_SIZE);
-                                break;
-                    case 'L': MSPrintf(EUSCI_A2_BASE, " Lost Base Connection\n", BUFFER_SIZE);
-                                break;
-                    default:  MSPrintf(EUSCI_A2_BASE, " Input Not Recognized\n", BUFFER_SIZE);
-                                break;
-            }
-        } */
-
-        c = 0x00;
 
     }
 
