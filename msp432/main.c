@@ -1,10 +1,13 @@
 #include <ti/devices/msp432p4xx/driverlib/driverlib.h>
-#include <Hardware/CS_Driver.h>
-#include <Hardware/UART_Driver.h>
-#include <Devices/timer.h>
-#include <Devices/KEYPAD_driver.h>
-#include <Devices/MSPIO.h>
-#include <Devices/HC05_pins.h>
+#include <Headers/CS_Driver.h>
+#include <Headers/UART_Driver.h>
+#include <Headers/timer.h>
+#include <Headers/KEYPAD_driver.h>
+#include <Headers/MSPIO.h>
+#include <Headers/HC05_driver.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "msp.h"
 
 #define BUFFER_SIZE    128
@@ -69,9 +72,8 @@ eUSCI_UART_Config UART2Config =
 uint32_t timer_count;
 
 void main(void) {
-    char c = 0x00;
-    int connected = 0; // flag indicating we connected to pi
-    int bootInit = 0; // flag to indicate pi connected on the boot
+    int connected = False; // flag indicating we connected to pi
+    int DPressed = True; // True for now
 
     MAP_WDT_A_holdTimer();
 
@@ -88,66 +90,19 @@ void main(void) {
 
     setup_bluetooth_state();
 
+    /*
     MAP_SysTick_enableModule();
     MAP_SysTick_setPeriod(1500000);
     MAP_Interrupt_enableSleepOnIsrExit();
     MAP_SysTick_enableInterrupt();
+    */
 
+    printf("in main\n");
 
-    while(1) {
-
-        while(!connected){
-            // send boot signal to pi
-            if (get_state_status()) {
-                printf("Connection status good\n");
-                if(!bootInit) {
-                    MSPrintf(EUSCI_A2_BASE, "boot\n", BUFFER_SIZE);
-                    printf("sending boot signal...\n");
-                }
-                if(UART_Read(EUSCI_A2_BASE, (uint8_t*)&c, 1) != 0){
-                    if(c == 'c') {
-                        printf("connected successfully\n");
-                        connected = True;
-                        bootInit = True;
-                    } else printf("pi is responding, still trying to connect...\n");
-                } else printf("waiting for response from pi...\n");
-
-            } else {
-                printf("Waiting for a connection...\n");
-            }
-        }
-
-
-        if (!get_state_status()) {
-            connected = False;
-        }
-        //1 for now. later: check if button D is pressed
-        else if(1) {
-            MSPrintf(EUSCI_A2_BASE, " start\n", BUFFER_SIZE);
-            UART_Read(EUSCI_A2_BASE, (uint8_t*)&c, 1);
-            if(c == 'l') {
-                printf("lost connection to server...\n");
-                connected = False;
-                bootInit = False;
-                continue;
-            }
-            else if(c == 'p') {
-                printf("face PASSED!\n");
-                printf("unlocking the door...\n");
-                //unlock the door
-            }
-            else if(c == 'f') {
-                printf("face FAILED!\n");
-                // try again
-            } else if(c == 0x00){
-                printf("default\n");
-            }
-            else printf("unrecognized input...\n");
-        }
-
-
+    while(True) {
+        if(!connected) connect_bluetooth(&connected);
+        else start_recognition(&connected, DPressed);
     }
-
 
 }
 

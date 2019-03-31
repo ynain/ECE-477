@@ -16,13 +16,12 @@
 
 #define True  1
 #define False 0
-
-char c = 0x00;
+#define BUFFER_SIZE 128
 
 void setup_bluetooth_state(void);
 int get_state_status(void);
 void connect_bluetooth(int* connected);
-void start_recognition(int* connected);
+void start_recognition(int* connected, int DPressed);
 
 
 #endif /* DEVICES_HC05_PINS_H_ */
