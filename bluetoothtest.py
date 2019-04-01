@@ -40,7 +40,7 @@ def bluetoothSkeleton(ipaddress='10.3.141.198', port=8000):
 
             # wait for "boot\n"? Also, testing, HC-05 stuck in stasis
             # if here, likely lost bluetooth connection, so wait to boot up again
-            while not pi.waitForBlueMessage(bsock, "boot")[0] and not pi.waitForBlueMessage(bsock, "start")[0]:
+            while not pi.waitForBlueMessage(bsock, "boot")[0]:
                 continue
 
             # send ready, pretend server connected
@@ -59,14 +59,23 @@ def bluetoothSkeleton(ipaddress='10.3.141.198', port=8000):
                     if success:
                         if found == "lowpwr":
                             pi.closeBluetoothConnection(bsock)
+                            bsock = None
                             break
                         
                         respass = True
+                        ran = random.random()
                         # randomize response, 10% chance for simulated output failure
-                        if random.random() > .9:
+                        if ran > .7:
+                            pi.sendBlueMessage(bsock, "l")
+                            pi.closeBluetoothConnection(bsock)
+                            bsock = None
+                            break
+                        elif ran > .35:
                             respass = False
-                        
-                        pi.sendResBluetooth(respass, bsock)
+                            pi.sendResBluetooth(respass, bsock)
+                        else:
+                            respass = True
+                            pi.sendResBluetooth(respass, bsock)
 
                 except blt.BluetoothError as bterr:
                     # if lost bluetooth, set blue to None, reconnect, wait for start/boot?
@@ -96,5 +105,5 @@ def bluetoothSkeleton(ipaddress='10.3.141.198', port=8000):
     print("{} entered".format(command))
 
 if __name__ == "__main__":
-    runPi(ipaddress='10.3.141.198')
-    # runPi(ipaddress='10.186.129.210')
+    bluetoothSkeleton(ipaddress='10.3.141.198')
+    # bluetoothSkeleton(ipaddress='10.186.129.210')
