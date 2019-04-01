@@ -20,11 +20,17 @@ int get_state_status(void) {
     return GPIO_getInputPinValue(GPIO_PORT_P4, GPIO_PIN1);
 }
 
-void connect_bluetooth(int* connected){
+void connect_bluetooth(int* connected, int* pswdVerified, char* password){
     char c = 0x00;
     if(!(*connected)){
-        printf("not connected yet\n");
+
         if(get_state_status()){
+            if(!get_password(password)) {
+                printf("wrong password\n");
+                return;
+            }
+            printf("correct password\n");
+            printf("not connected yet\n");
             MSPrintf(EUSCI_A2_BASE, "boot\n", BUFFER_SIZE);
             printf("sending boot signal...\n");
         }
@@ -56,4 +62,18 @@ void start_recognition(int *connected, int DPressed){
             printf("face FAILED!\n");
         } else printf("unrecognized input...\n");
     }
+}
+
+int get_password(char* password){
+    int numComp = 0;
+    MSPrintf(EUSCI_A2_BASE, " pswd\n", BUFFER_SIZE);
+    printf("sending pswd signal...\n");
+
+    MSPgets(EUSCI_A2_BASE, pswrd_comp, BUFFER_SIZE);
+    printf("%s\n", pswrd_comp);
+    printf("len = %d\n", strlen(pswrd_comp));
+    if((numComp = strncmp(pswrd_comp, password, strlen(pswrd_comp) - 2)) == 0) printf("comp = %d, passwords match\n", numComp);
+    else printf("comp = %d, passwords don't match\n", numComp);
+
+    return True;
 }
