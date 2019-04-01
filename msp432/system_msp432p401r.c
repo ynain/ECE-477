@@ -2,15 +2,15 @@
 * @file     system_msp432p401r.c
 * @brief    CMSIS Cortex-M4F Device Peripheral Access Layer Source File for
 *           MSP432P401R
-* @version  3.230
-* @date     12/06/17
+* @version  3.231
+* @date     01/26/18
 *
 * @note     View configuration instructions embedded in comments
 *
 ******************************************************************************/
 //*****************************************************************************
 //
-// Copyright (C) 2015 - 2017 Texas Instruments Incorporated - http://www.ti.com/
+// Copyright (C) 2015 - 2018 Texas Instruments Incorporated - http://www.ti.com/
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -43,7 +43,7 @@
 //*****************************************************************************
 
 #include <stdint.h>
-#include "msp.h"
+#include <ti/devices/msp432p4xx/inc/msp.h>
 
 /*--------------------- Configuration Instructions ----------------------------
    1. If you prefer to halt the Watchdog Timer, set __HALT_WDT to 1:
@@ -154,7 +154,7 @@ void SystemCoreClockUpdate(void)
         break;
     case CS_CTL1_SELM__DCOCLK:
         dcoTune = (CS->CTL0 & CS_CTL0_DCOTUNE_MASK) >> CS_CTL0_DCOTUNE_OFS;
-    
+
         switch(CS->CTL0 & CS_CTL0_DCORSEL_MASK)
         {
         case CS_CTL0_DCORSEL_0:
@@ -288,7 +288,7 @@ void SystemInit(void)
     // DCO = 1.5 MHz; MCLK = source
     CS->KEY = CS_KEY_VAL;                                  // Unlock CS module for register access
     CS->CTL0 = CS_CTL0_DCORSEL_0;                          // Set DCO to 1.5MHz
-    CS->CTL1 = (CS->CTL1 & ~(CS_CTL1_SELM_MASK | CS_CTL1_DIVM_MASK)) | CS_CTL1_SELM__DCOCLK;  
+    CS->CTL1 = (CS->CTL1 & ~(CS_CTL1_SELM_MASK | CS_CTL1_DIVM_MASK)) | CS_CTL1_SELM__DCOCLK;
 	                                                       // Select MCLK as DCO source
     CS->KEY = 0;
 
@@ -311,7 +311,7 @@ void SystemInit(void)
     // DCO = 3 MHz; MCLK = source
     CS->KEY = CS_KEY_VAL;                                  // Unlock CS module for register access
     CS->CTL0 = CS_CTL0_DCORSEL_1;                          // Set DCO to 1.5MHz
-    CS->CTL1 = (CS->CTL1 & ~(CS_CTL1_SELM_MASK | CS_CTL1_DIVM_MASK)) | CS_CTL1_SELM__DCOCLK;  
+    CS->CTL1 = (CS->CTL1 & ~(CS_CTL1_SELM_MASK | CS_CTL1_DIVM_MASK)) | CS_CTL1_SELM__DCOCLK;
 	                                                       // Select MCLK as DCO source
     CS->KEY = 0;
 
@@ -334,7 +334,7 @@ void SystemInit(void)
     // DCO = 12 MHz; MCLK = source
     CS->KEY = CS_KEY_VAL;                                  // Unlock CS module for register access
     CS->CTL0 = CS_CTL0_DCORSEL_3;                          // Set DCO to 12MHz
-    CS->CTL1 = (CS->CTL1 & ~(CS_CTL1_SELM_MASK | CS_CTL1_DIVM_MASK)) | CS_CTL1_SELM__DCOCLK;  
+    CS->CTL1 = (CS->CTL1 & ~(CS_CTL1_SELM_MASK | CS_CTL1_DIVM_MASK)) | CS_CTL1_SELM__DCOCLK;
 	                                                       // Select MCLK as DCO source
     CS->KEY = 0;
 
@@ -359,7 +359,7 @@ void SystemInit(void)
     // DCO = 24 MHz; MCLK = source
     CS->KEY = CS_KEY_VAL;                                  // Unlock CS module for register access
     CS->CTL0 = CS_CTL0_DCORSEL_4;                          // Set DCO to 24MHz
-    CS->CTL1 = (CS->CTL1 & ~(CS_CTL1_SELM_MASK | CS_CTL1_DIVM_MASK)) | CS_CTL1_SELM__DCOCLK;  
+    CS->CTL1 = (CS->CTL1 & ~(CS_CTL1_SELM_MASK | CS_CTL1_DIVM_MASK)) | CS_CTL1_SELM__DCOCLK;
 	                                                       // Select MCLK as DCO source
     CS->KEY = 0;
 
@@ -387,7 +387,7 @@ void SystemInit(void)
     // DCO = 48 MHz; MCLK = source
     CS->KEY = CS_KEY_VAL;                                  // Unlock CS module for register access
     CS->CTL0 = CS_CTL0_DCORSEL_5;                          // Set DCO to 48MHz
-    CS->CTL1 = (CS->CTL1 & ~(CS_CTL1_SELM_MASK | CS_CTL1_DIVM_MASK)) | CS_CTL1_SELM__DCOCLK;  
+    CS->CTL1 = (CS->CTL1 & ~(CS_CTL1_SELM_MASK | CS_CTL1_DIVM_MASK)) | CS_CTL1_SELM__DCOCLK;
 	                                                       // Select MCLK as DCO source
     CS->KEY = 0;
 
