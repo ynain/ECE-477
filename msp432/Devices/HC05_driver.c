@@ -5,8 +5,8 @@
  *      Author: 477grp2
  */
 
-#include <Devices/aHC05_driver.h>
-#include <Devices/aMSPIO.h>
+#include <Headers/HC05_driver.h>
+#include <Headers/MSPIO.h>
 #include <ti/devices/msp432p4xx/driverlib/gpio.h>
 #include <stdio.h>
 #include <stdlib.h>

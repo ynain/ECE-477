@@ -2,7 +2,7 @@
 #define MSPIO_H_
 
 #include <stdio.h>
-#include "../Hardware/aUART_Driver.h"
+#include <Headers/UART_Driver.h>
 
 void MSPrintf(uint32_t UART, const char *fs, ...);
 int MSPgets(uint32_t UART, char *b, int size);

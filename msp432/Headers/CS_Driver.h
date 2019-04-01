@@ -1,5 +1,5 @@
-#ifndef HARDWARE_ACS_DRIVER_H_
-#define HARDWARE_ACS_DRIVER_H_
+#ifndef HARDWARE_CS_DRIVER_H_
+#define HARDWARE_CS_DRIVER_H_
 
 #include <ti/devices/msp432p4xx/driverlib/cs.h>
 #include <ti/devices/msp432p4xx/driverlib/pcm.h>
@@ -8,4 +8,4 @@
 
 void CS_Init(void);
 
-#endif /* HARDWARE_ACS_DRIVER_H_ */
+#endif /* HARDWARE_CS_DRIVER_H_ */
