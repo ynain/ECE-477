@@ -8,7 +8,7 @@
 #include <ti/devices/msp432p4xx/driverlib/interrupt.h>
 
 
-void GPIO_Init(void);
+void Keypad_Init(void);
 void GPIO_status(void);
 
 #endif // HARDWARE_KEYPAD_DRIVER_H_
