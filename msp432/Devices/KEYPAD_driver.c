@@ -97,13 +97,14 @@ void PORT6_IRQHandler(void){
     int current_time;
     char button_pressed;
     int was_button_pressed;
+    char password[5] = {'1', 'A', '2', 'B', 'C'};
+    int incorrect = 0;
     int pin_value;
     int i;
     int j;
 
-
     current_time = SysTick_getValue();
-    //printf("%d\n", current_time);
+
 
     //Threshold conditions...
     if(last_time_pressed != -1 && current_time < last_time_pressed && last_time_pressed - current_time < threshold ){
@@ -149,8 +150,23 @@ void PORT6_IRQHandler(void){
 
     if(kp_count % 5 == 0 && kp_count > 0){
         for(i=kp_count-5; i<kp_count; i++){
-            printf("button pressed: %c\n", keys_pressed[i]);
+                if(keys_pressed[i] != password[i % 5]){
+                    incorrect--;
+                    printf("button pressed: %c is not %c \n", keys_pressed[i], password[i % 5]);
+                }
+                else{
+                    printf("button pressed: %c \n", keys_pressed[i]);
+                }
+         }
+
+        if(incorrect == 0){
+            printf("Unlocking...\n");
         }
+        else {
+            printf("Remain locked, incorrect == %d \n", incorrect);
+        }
+
+        incorrect = 0;
     }
 
 
