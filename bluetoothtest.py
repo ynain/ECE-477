@@ -41,7 +41,7 @@ def bluetoothSkeleton(ipaddress='10.3.141.198', port=8000):
             # wait for "boot\n"? Also, testing, HC-05 stuck in stasis
             # if here, likely lost bluetooth connection, so wait to boot up again
             found = False
-            pswd = "12346969696969\n"
+            pswd = "12345678\n"
             while not found:
                 received = pi.getBlueMessage(bsock)
 
