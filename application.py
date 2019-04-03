@@ -100,53 +100,27 @@ def runPi(ipaddress='10.3.141.198', port=8000):
                 
 
             while command != 'quit':
-                send = recv = None                
-                try:
-                    found = None
-                    while found is None:
-                        success, found = pi.waitForBlueMessage(bsock, "start", timeout=4)
-                        if not success:
-                            success, found = pi.waitForBlueMessage(bsock, "lowpwr", timeout=4)
-                    
-                    if success:
-                        if found == "lowpwr":
-                            pi.closeBluetoothConnection(bsock)
-                            bsock = None
-                            break
+                send = recv = None
+                
+                found = None
+                while found is None:
+                    success, found = pi.waitForBlueMessage(bsock, "start", timeout=4)
+                    if not success:
+                        success, found = pi.waitForBlueMessage(bsock, "lowpwr", timeout=4)
+                
+                if success:
+                    if found == "lowpwr":
+                        pi.closeBluetoothConnection(bsock)
+                        bsock = None
+                        break
 
-                        send, recv = pi.getWriteSocs(conn)
-                        h.catchInterruptClose(conn, recv, send)
-                        pi.sendFrames(connect=send)
+                    send, recv = pi.getWriteSocs(conn)
+                    h.catchInterruptClose(conn, recv, send)
+                    pi.sendFrames(connect=send)
 
-                        res = pi.readResults(connect=recv)
-                        respass = pi.evaluateImages(res)
-                        pi.sendResBluetooth(respass, bsock)
-
-                except blt.BluetoothError as bterr:
-                    # if lost bluetooth, set blue to None, reconnect, wait for start/boot?
-                    traceback.print_exc()
-                    print("Bluetooth failed, connecting again")
-                    
-                    pi.closeBluetoothConnection(bsock)
-
-                    bsock = None
-                    break
-
-                except socket.error as serror:
-                    # if lost server, send "l"ost, set conn to None reconnect, send "r"eady after
-                    traceback.print_exc()
-                    pi.sendBlueMessage(bsock, "l")
-                    
-                    # try to healthily close everything
-                    pi.closeAllSocs(conn, recv, send)
-                    
-                    conn = None
-                    break
-                    
-
-                except Exception as e:
-                    traceback.print_exc()
-                    break
+                    res = pi.readResults(connect=recv)
+                    respass = pi.evaluateImages(res)
+                    pi.sendResBluetooth(respass, bsock)
             
                 if not send is None or not recv is None:
                     pi.closeWriteSocs(send, recv)
@@ -154,7 +128,26 @@ def runPi(ipaddress='10.3.141.198', port=8000):
                 command = input("Type anything to send images again,\n or 'quit' to quit\n")
             pi.closeConnection(conn)
         
+        except blt.BluetoothError as bterr:
+            # if lost bluetooth, set blue to None, reconnect, wait for start/boot?
+            traceback.print_exc()
+            print("Bluetooth failed, connecting again")
+            
+            pi.closeBluetoothConnection(bsock)
 
+            bsock = None
+            break
+
+        except socket.error as serror:
+            # if lost server, send "l"ost, set conn to None reconnect, send "r"eady after
+            traceback.print_exc()
+            pi.sendBlueMessage(bsock, "l")
+            
+            # try to healthily close everything
+            pi.closeAllSocs(conn, recv, send)
+            
+            conn = None
+            break
         
         except Exception as e:
             traceback.print_exc()
