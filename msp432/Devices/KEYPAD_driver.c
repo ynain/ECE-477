@@ -29,9 +29,13 @@ typedef struct _KeypadGPIO {
 int overflow_count = 0; // count the number of SysTick overflows that occur between presses
 char keys_pressed[100]; // array holding button pressed, used for testing
 int kp_count = 0; // count the key presses
-int period = 24000000; // number of ticks per period, aligns with master clock operating at 24Mhz
-int threshold = 3*240000;
+int period = 2*24000000; // number of ticks per period, aligns with master clock operating at 24Mhz
+int threshold = 120000;
 int last_time_pressed = -1; // last press detected time stamp
+
+int locking = 0;
+int unlocking = 0;
+int verifying = 0;
 
 extern KeypadGPIO ButtonKeys[8] = {
                  {.port = GPIO_PORT_P2, .pin = GPIO_PIN4},
@@ -55,10 +59,11 @@ void Keypad_Init(void) {
 
     int i;
 
-    MAP_GPIO_setAsOutputPin(GPIO_PORT_P2, GPIO_PIN3);
-    MAP_GPIO_setAsOutputPin(GPIO_PORT_P3, GPIO_PIN7);
-    GPIO_setOutputHighOnPin(GPIO_PORT_P2, GPIO_PIN3);
+    MAP_GPIO_setAsOutputPin(GPIO_PORT_P2, GPIO_PIN3); // yellow
+    MAP_GPIO_setAsOutputPin(GPIO_PORT_P3, GPIO_PIN7); // red
+    MAP_GPIO_setAsOutputPin(GPIO_PORT_P3, GPIO_PIN5); // green
 
+    //red_on();
 
 
     MAP_SysTick_enableModule();
@@ -85,7 +90,8 @@ void Keypad_Init(void) {
     //MAP_Interrupt_enableInterrupt(INT_PORT5);
     MAP_Interrupt_enableInterrupt(INT_PORT6);
 
-    printf("GPIO Init \n");
+    printf("Keypad Init \n");
+    return;
 
 }
 
@@ -105,7 +111,9 @@ void PORT6_IRQHandler(void){
 
     current_time = SysTick_getValue();
 
-
+    if(unlocking == 1 || locking == 1){
+        return;
+    }
     //Threshold conditions...
     if(last_time_pressed != -1 && current_time < last_time_pressed && last_time_pressed - current_time < threshold ){
         //GPIO_toggleOutputOnPin(GPIO_PORT_P2, GPIO_PIN3);
@@ -119,7 +127,6 @@ void PORT6_IRQHandler(void){
     }
 
     last_time_pressed = current_time;
-    overflow_count = 0;
     was_button_pressed = False;
 
     // Toggle off
@@ -137,7 +144,6 @@ void PORT6_IRQHandler(void){
             if(pin_value){
                 button_pressed = Buttons[j][i];
                 was_button_pressed = True;
-                GPIO_toggleOutputOnPin(GPIO_PORT_P2, GPIO_PIN3);
                 break;
             }
         }
@@ -160,10 +166,19 @@ void PORT6_IRQHandler(void){
          }
 
         if(incorrect == 0){
+            green_on();
+            yellow_off();
+            overflow_count = 0;
+            unlocking = 1;
             printf("Unlocking...\n");
         }
         else {
-            printf("Remain locked, incorrect == %d \n", incorrect);
+
+            locking = 1;
+            red_on();
+            yellow_off();
+            overflow_count = 0;
+            printf("Remain locked\n");
         }
 
         incorrect = 0;
@@ -180,9 +195,50 @@ void PORT6_IRQHandler(void){
 
 void SysTick_Handler(void)
 {
-    GPIO_toggleOutputOnPin(GPIO_PORT_P3, GPIO_PIN7);
+
+    if(overflow_count > 5 && locking){
+        locking = 0;
+        red_off();
+    }
+
+    if(overflow_count > 5 && unlocking){
+        unlocking = 0;
+        green_off();
+    }
+    if(kp_count % 5 == 0 && locking == 1 || unlocking == 1){
+        yellow_off();
+    }
+    if(kp_count % 5 == 0 && locking == 0 && unlocking == 0){
+        toggle_yellow();
+    }
+    if(kp_count % 5 != 0 && locking == 0 && unlocking == 0){
+        yellow_on();
+    }
+    overflow_count++;
+    //GPIO_toggleOutputOnPin(GPIO_PORT_P3, GPIO_PIN7);
 }
 
+void yellow_on(void){
+    GPIO_setOutputHighOnPin(GPIO_PORT_P2, GPIO_PIN3);
+}
+void yellow_off(void){
+    GPIO_setOutputLowOnPin(GPIO_PORT_P2, GPIO_PIN3);
+}
+void toggle_yellow(void){
+    GPIO_toggleOutputOnPin(GPIO_PORT_P2, GPIO_PIN3);
+}
+void red_on(void){
+    GPIO_setOutputHighOnPin(GPIO_PORT_P3, GPIO_PIN7);
+}
+void red_off(void){
+    GPIO_setOutputLowOnPin(GPIO_PORT_P3, GPIO_PIN7);
+}
+void green_on(void){
+    GPIO_setOutputHighOnPin(GPIO_PORT_P3, GPIO_PIN5);
+}
+void green_off(void){
+    GPIO_setOutputLowOnPin(GPIO_PORT_P3, GPIO_PIN5);
+}
 
 void GPIO_status(void) {
 

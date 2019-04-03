@@ -20,12 +20,14 @@
 #define BUFFER_SIZE 128
 
 char pswrd_comp[BUFFER_SIZE];
+int password_match;
 
 int get_password(char* password);
 void setup_bluetooth_state(void);
 int get_state_status(void);
 void connect_bluetooth(int* connected, int* pswdVerified, char* password);
 void start_recognition(int* connected, int DPressed);
+void reset_temp_buffer(void);
 
 
 #endif /* DEVICES_HC05_PINS_H_ */
