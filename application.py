@@ -80,12 +80,14 @@ def runPi(ipaddress='10.3.141.198', port=8000):
                 # wait for "boot\n"? Also, testing, HC-05 stuck in stasis
                 # if here, likely lost bluetooth connection, so wait to boot up again
                 pswd = "12345678\n"
-                received = pi.getBlueMessage(bsock)
+                received = ""
 
                 while "boot" not in received:
                     if "pswd" in received:
                         print("{} called, sending {}".format("pswd", pswd))
                         pi.sendBlueMessage(bsock, pswd)
+
+                    received = pi.getBlueMessage(bsock)
 
             if conn is None:
                 # wait for "boot\n"? Also, testing, HC-05 stuck in stasis
