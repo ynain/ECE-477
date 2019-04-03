@@ -77,8 +77,6 @@ def bluetoothSkeleton(ipaddress='10.3.141.198', port=8000):
                         # randomize response, 10% chance for simulated output failure
                         if ran > .7:
                             pi.sendBlueMessage(bsock, "l")
-                            pi.closeBluetoothConnection(bsock)
-                            bsock = None
                             break
                         elif ran > .35:
                             respass = False

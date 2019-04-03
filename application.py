@@ -77,10 +77,20 @@ def runPi(ipaddress='10.3.141.198', port=8000):
                 # connect to Bluetooth
                 bsock = pi.getBlueConnection(mac="98:D3:71:FD:50:9E")
 
+                # wait for "boot\n"? Also, testing, HC-05 stuck in stasis
+                # if here, likely lost bluetooth connection, so wait to boot up again
+                pswd = "12345678\n"
+                received = pi.getBlueMessage(bsock)
+
+                while "boot" not in received:
+                    if "pswd" in received:
+                        print("{} called, sending {}".format("pswd", pswd))
+                        pi.sendBlueMessage(bsock, pswd)
+
             if conn is None:
                 # wait for "boot\n"? Also, testing, HC-05 stuck in stasis
-                while not pi.waitForBlueMessage(bsock, "boot")[0] and not pi.waitForBlueMessage(bsock, "start")[0]:
-                    continue
+                while "boot" not in received:
+                    received = pi.getBlueMessage(bsock)
                 # print("Got boot")
                 # connect to server
                 conn = pi.getServerConnection(ipaddress=ipaddress)
@@ -101,6 +111,7 @@ def runPi(ipaddress='10.3.141.198', port=8000):
                     if success:
                         if found == "lowpwr":
                             pi.closeBluetoothConnection(bsock)
+                            bsock = None
                             break
 
                         send, recv = pi.getWriteSocs(conn)
