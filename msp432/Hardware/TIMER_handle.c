@@ -15,7 +15,7 @@ void Timer_Init(void){
 
     MAP_SysTick_enableModule();
     MAP_SysTick_setPeriod(PERIOD);
-    MAP_Interrupt_enableSleepOnIsrExit();
+    //MAP_Interrupt_enableSleepOnIsrExit();
     MAP_SysTick_enableInterrupt();
 
     printf("Timer init\n");

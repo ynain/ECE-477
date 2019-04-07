@@ -2,7 +2,7 @@
 
 void main(void) {
 
-    int DPressed = True; //TODO: change later
+    //int DPressed = True; //TODO: change later
     int pswdVerified = False;
 
     strcpy(password, "12345678");

@@ -9,6 +9,7 @@
 #include <ti/devices/msp432p4xx/driverlib/driverlib.h>
 //
 #include <Headers/TIMER_handle.h>
+#include <Headers/HC05_driver.h>
 #include <inttypes.h>
 
 #define ROW 4
