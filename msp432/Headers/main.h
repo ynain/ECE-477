@@ -6,6 +6,7 @@
 #include <Headers/UART_Driver.h>
 #include <Headers/timer.h>
 #include <Headers/KEYPAD_driver.h>
+#include <Headers/TIMER_handle.h>
 #include <Headers/MSPIO.h>
 #include <Headers/HC05_driver.h>
 #include "msp.h"
@@ -23,6 +24,8 @@ typedef struct _command{
     char id;
     char string[BUFFER_SIZE];
 }Command;
+
+int connected = False; // flag indicating we connected to pi
 
 
 /* UART Configuration Parameter. These are the configuration parameters to

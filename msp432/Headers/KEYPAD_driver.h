@@ -6,7 +6,17 @@
 #include <string.h>
 #include <ti/devices/msp432p4xx/driverlib/gpio.h>
 #include <ti/devices/msp432p4xx/driverlib/interrupt.h>
+#include <ti/devices/msp432p4xx/driverlib/driverlib.h>
+//
+#include <Headers/TIMER_handle.h>
+#include <inttypes.h>
 
+#define ROW 4
+#define COL 4
+#define True 1
+#define False 0
+
+extern int connected; //from main
 
 void Keypad_Init(void);
 void GPIO_status(void);
