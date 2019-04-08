@@ -56,6 +56,9 @@ Hardware/TIMER_handle.obj: C:/ti/simplelink_msp432p4_sdk_2_40_00_10/source/ti/de
 Hardware/TIMER_handle.obj: C:/ti/simplelink_msp432p4_sdk_2_40_00_10/source/ti/devices/msp432p4xx/driverlib/wdt_a.h
 Hardware/TIMER_handle.obj: C:/ti/simplelink_msp432p4_sdk_2_40_00_10/source/ti/devices/msp432p4xx/driverlib/sysctl.h
 Hardware/TIMER_handle.obj: C:/ti/simplelink_msp432p4_sdk_2_40_00_10/source/ti/devices/msp432p4xx/driverlib/flash.h
+Hardware/TIMER_handle.obj: C:/Users/477grp2/Documents/dawg/Headers/LED_driver.h
+Hardware/TIMER_handle.obj: C:/Users/477grp2/Documents/dawg/Headers/LED_driver.h
+Hardware/TIMER_handle.obj: C:/Users/477grp2/Documents/dawg/Headers/Lock_handler.h
 Hardware/TIMER_handle.obj: C:/Users/477grp2/Documents/dawg/Headers/KEYPAD_driver.h
 Hardware/TIMER_handle.obj: C:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.5.LTS/include/stdlib.h
 Hardware/TIMER_handle.obj: C:/Users/477grp2/Documents/dawg/Headers/HC05_driver.h
@@ -119,6 +122,9 @@ C:/ti/simplelink_msp432p4_sdk_2_40_00_10/source/ti/devices/msp432p4xx/driverlib/
 C:/ti/simplelink_msp432p4_sdk_2_40_00_10/source/ti/devices/msp432p4xx/driverlib/wdt_a.h: 
 C:/ti/simplelink_msp432p4_sdk_2_40_00_10/source/ti/devices/msp432p4xx/driverlib/sysctl.h: 
 C:/ti/simplelink_msp432p4_sdk_2_40_00_10/source/ti/devices/msp432p4xx/driverlib/flash.h: 
+C:/Users/477grp2/Documents/dawg/Headers/LED_driver.h: 
+C:/Users/477grp2/Documents/dawg/Headers/LED_driver.h: 
+C:/Users/477grp2/Documents/dawg/Headers/Lock_handler.h: 
 C:/Users/477grp2/Documents/dawg/Headers/KEYPAD_driver.h: 
 C:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.5.LTS/include/stdlib.h: 
 C:/Users/477grp2/Documents/dawg/Headers/HC05_driver.h: 

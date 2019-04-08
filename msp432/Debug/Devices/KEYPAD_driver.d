@@ -58,6 +58,9 @@ Devices/KEYPAD_driver.obj: C:/Users/477grp2/Documents/dawg/Headers/TIMER_handle.
 Devices/KEYPAD_driver.obj: C:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.5.LTS/include/stdlib.h
 Devices/KEYPAD_driver.obj: C:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.5.LTS/include/inttypes.h
 Devices/KEYPAD_driver.obj: C:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.5.LTS/include/machine/_inttypes.h
+Devices/KEYPAD_driver.obj: C:/Users/477grp2/Documents/dawg/Headers/LED_driver.h
+Devices/KEYPAD_driver.obj: C:/Users/477grp2/Documents/dawg/Headers/LED_driver.h
+Devices/KEYPAD_driver.obj: C:/Users/477grp2/Documents/dawg/Headers/Lock_handler.h
 Devices/KEYPAD_driver.obj: C:/Users/477grp2/Documents/dawg/Headers/HC05_driver.h
 Devices/KEYPAD_driver.obj: C:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.5.LTS/include/stdlib.h
 Devices/KEYPAD_driver.obj: C:/Users/477grp2/Documents/dawg/Headers/MSPIO.h
@@ -121,6 +124,9 @@ C:/Users/477grp2/Documents/dawg/Headers/TIMER_handle.h:
 C:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.5.LTS/include/stdlib.h: 
 C:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.5.LTS/include/inttypes.h: 
 C:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.5.LTS/include/machine/_inttypes.h: 
+C:/Users/477grp2/Documents/dawg/Headers/LED_driver.h: 
+C:/Users/477grp2/Documents/dawg/Headers/LED_driver.h: 
+C:/Users/477grp2/Documents/dawg/Headers/Lock_handler.h: 
 C:/Users/477grp2/Documents/dawg/Headers/HC05_driver.h: 
 C:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.5.LTS/include/stdlib.h: 
 C:/Users/477grp2/Documents/dawg/Headers/MSPIO.h: 

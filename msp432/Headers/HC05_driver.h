@@ -29,5 +29,4 @@ void connect_bluetooth(int* connected, int* pswdVerified, char* password);
 void start_recognition(int* connected, int DPressed);
 void reset_temp_buffer(void);
 
-
 #endif /* DEVICES_HC05_PINS_H_ */

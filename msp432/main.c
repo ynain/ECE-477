@@ -16,6 +16,8 @@ void main(void) {
 
     UART_Init(EUSCI_A2_BASE, UART2Config);
 
+    leds_init();
+    lock_init();
     Keypad_Init();
     //printf("after keypad\n");
 
@@ -27,7 +29,8 @@ void main(void) {
 
     while(True) {
 
-        if(!connected) connect_bluetooth(&connected, &pswdVerified, password);
+        //if(!connected) connect_bluetooth(&connected, &pswdVerified, password);
+
         //else start_recognition(&connected, DPressed);
     }
 

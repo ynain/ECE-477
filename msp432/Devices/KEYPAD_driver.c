@@ -6,7 +6,6 @@
  */
 #include <Headers/KEYPAD_driver.h>
 
-
 char keys_pressed[100]; // array holding button pressed, used for testing
 int period = 2*24000000; // number of ticks per period, aligns with master clock operating at 24Mhz
 int threshold = 120000;
@@ -47,13 +46,6 @@ void Keypad_Init(void) {
 
     int i;
 
-    MAP_GPIO_setAsOutputPin(GPIO_PORT_P2, GPIO_PIN3); // yellow
-    MAP_GPIO_setAsOutputPin(GPIO_PORT_P3, GPIO_PIN7); // red
-    MAP_GPIO_setAsOutputPin(GPIO_PORT_P3, GPIO_PIN5); // green
-
-    red_on();
-    yellow_off();
-    green_off();
 
     for (i = 0; i < ROW; i++){
         MAP_GPIO_setAsOutputPin(ButtonKeys[i].port, ButtonKeys[i].pin);
@@ -87,15 +79,15 @@ void PORT6_IRQHandler(void){
     int current_time;
     char button_pressed;
     int was_button_pressed;
-    char password[5] = {'1', 'A', '2', 'B', 'C'};
-    int incorrect = 0;
+    //char password[5] = {'1', 'A', '2', 'B', 'C'};
+    //int incorrect = 0;
     int pin_value;
     int i;
     int j;
 
     current_time = SysTick_getValue();
 
-    if(get_unlocking() == 1 || get_locking() == 1){
+    if(lockIsBusy() == 1){
         //printf("locking & unlocking are both True\n");
         return;
     }
@@ -129,10 +121,10 @@ void PORT6_IRQHandler(void){
             if(pin_value){
                 button_pressed = Buttons[j][i];
                 was_button_pressed = True;
-                toggle_yellow();
-                if(button_pressed == 'D') {
-                    start_recognition(&connected, True);
-                }
+
+                //send the button pressed to the lock handler
+                lock_button_pressed(button_pressed);
+
                 break;
             }
         }
@@ -143,6 +135,8 @@ void PORT6_IRQHandler(void){
         }
     }
 
+    //Logic handled in the lock handler now
+    /*
     if(get_kp_count() % 5 == 0 && get_kp_count() > 0){
         for(i=get_kp_count()-5; i<get_kp_count(); i++){
                 if(keys_pressed[i] != password[i % 5]){
@@ -155,6 +149,7 @@ void PORT6_IRQHandler(void){
                 }
          }
 
+        // Logic in the lock handler now
         if(incorrect == 0){
             green_on();
             yellow_off();
@@ -174,7 +169,7 @@ void PORT6_IRQHandler(void){
         }
 
         incorrect = 0;
-    }
+    }*/
 
 
     //Toggle back on
@@ -212,7 +207,7 @@ void SysTick_Handler(void)
 
 }*/
 
-void yellow_on(void){
+/*void yellow_on(void){
     GPIO_setOutputHighOnPin(GPIO_PORT_P2, GPIO_PIN3);
 }
 void yellow_off(void){
@@ -232,7 +227,7 @@ void green_on(void){
 }
 void green_off(void){
     GPIO_setOutputLowOnPin(GPIO_PORT_P3, GPIO_PIN5);
-}
+}*/
 
 
 void GPIO_status(void) {

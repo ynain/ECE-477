@@ -15,8 +15,10 @@ ORDERED_OBJS += \
 "./system_msp432p401r.obj" \
 "./Devices/HC05_driver.obj" \
 "./Devices/KEYPAD_driver.obj" \
+"./Devices/Lock_handler.obj" \
 "./Devices/MSPIO.obj" \
 "./Hardware/CS_Driver.obj" \
+"./Hardware/LED_driver.obj" \
 "./Hardware/TIMER_handle.obj" \
 "./Hardware/UART_Driver.obj" \
 "../msp432p401r.cmd" \
@@ -166,8 +168,8 @@ dawgSystem.hex: $(EXE_OUTPUTS)
 # Other Targets
 clean:
 	-$(RM) $(BIN_OUTPUTS__QUOTED)$(EXE_OUTPUTS__QUOTED)
-	-$(RM) "main.obj" "startup_msp432p401r_ccs.obj" "system_msp432p401r.obj" "Devices\HC05_driver.obj" "Devices\KEYPAD_driver.obj" "Devices\MSPIO.obj" "Hardware\CS_Driver.obj" "Hardware\TIMER_handle.obj" "Hardware\UART_Driver.obj" 
-	-$(RM) "main.d" "startup_msp432p401r_ccs.d" "system_msp432p401r.d" "Devices\HC05_driver.d" "Devices\KEYPAD_driver.d" "Devices\MSPIO.d" "Hardware\CS_Driver.d" "Hardware\TIMER_handle.d" "Hardware\UART_Driver.d" 
+	-$(RM) "main.obj" "startup_msp432p401r_ccs.obj" "system_msp432p401r.obj" "Devices\HC05_driver.obj" "Devices\KEYPAD_driver.obj" "Devices\Lock_handler.obj" "Devices\MSPIO.obj" "Hardware\CS_Driver.obj" "Hardware\LED_driver.obj" "Hardware\TIMER_handle.obj" "Hardware\UART_Driver.obj" 
+	-$(RM) "main.d" "startup_msp432p401r_ccs.d" "system_msp432p401r.d" "Devices\HC05_driver.d" "Devices\KEYPAD_driver.d" "Devices\Lock_handler.d" "Devices\MSPIO.d" "Hardware\CS_Driver.d" "Hardware\LED_driver.d" "Hardware\TIMER_handle.d" "Hardware\UART_Driver.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 

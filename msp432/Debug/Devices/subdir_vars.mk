@@ -8,31 +8,37 @@ SHELL = cmd.exe
 C_SRCS += \
 ../Devices/HC05_driver.c \
 ../Devices/KEYPAD_driver.c \
+../Devices/Lock_handler.c \
 ../Devices/MSPIO.c 
 
 C_DEPS += \
 ./Devices/HC05_driver.d \
 ./Devices/KEYPAD_driver.d \
+./Devices/Lock_handler.d \
 ./Devices/MSPIO.d 
 
 OBJS += \
 ./Devices/HC05_driver.obj \
 ./Devices/KEYPAD_driver.obj \
+./Devices/Lock_handler.obj \
 ./Devices/MSPIO.obj 
 
 OBJS__QUOTED += \
 "Devices\HC05_driver.obj" \
 "Devices\KEYPAD_driver.obj" \
+"Devices\Lock_handler.obj" \
 "Devices\MSPIO.obj" 
 
 C_DEPS__QUOTED += \
 "Devices\HC05_driver.d" \
 "Devices\KEYPAD_driver.d" \
+"Devices\Lock_handler.d" \
 "Devices\MSPIO.d" 
 
 C_SRCS__QUOTED += \
 "../Devices/HC05_driver.c" \
 "../Devices/KEYPAD_driver.c" \
+"../Devices/Lock_handler.c" \
 "../Devices/MSPIO.c" 
 
 

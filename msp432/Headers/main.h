@@ -9,6 +9,10 @@
 #include <Headers/TIMER_handle.h>
 #include <Headers/MSPIO.h>
 #include <Headers/HC05_driver.h>
+
+#include <Headers/LED_driver.h>
+#include <Headers/Lock_handler.h>
+
 #include "msp.h"
 
 #define BUFFER_SIZE    128
