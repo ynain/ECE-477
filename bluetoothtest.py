@@ -40,18 +40,15 @@ def bluetoothSkeleton(ipaddress='10.3.141.198', port=8000):
 
             # wait for "boot\n"? Also, testing, HC-05 stuck in stasis
             # if here, likely lost bluetooth connection, so wait to boot up again
-            found = False
             pswd = "12345678\n"
-            while not found:
-                received = pi.getBlueMessage(bsock)
+            received = ""
 
-                if "boot" in received:
-                    print("{} found, connecting".format("boot"))
-                    found = True
-
-                elif "pswd" in received:
+            while "boot" not in received:
+                if "pswd" in received:
                     print("{} called, sending {}".format("pswd", pswd))
                     pi.sendBlueMessage(bsock, pswd)
+
+                received = pi.getBlueMessage(bsock)
 
             # send ready, pretend server connected
             pi.sendBlueMessage(bsock, "c")
@@ -84,23 +81,17 @@ def bluetoothSkeleton(ipaddress='10.3.141.198', port=8000):
                         else:
                             respass = True
                             pi.sendResBluetooth(respass, bsock)
-
-                except blt.BluetoothError as bterr:
-                    # if lost bluetooth, set blue to None, reconnect, wait for start/boot?
-                    traceback.print_exc()
-                    print("Bluetooth failed, connecting again")
-                    
-                    pi.closeBluetoothConnection(bsock)
-
-                    bsock = None
-                    break
-                    
-
-                except Exception as e:
-                    traceback.print_exc()
-                    break
             
                 command = input("Type anything to send images again,\n or 'quit' to quit\n")
+
+        except blt.BluetoothError as bterr:
+            # if lost bluetooth, set blue to None, reconnect, wait for start/boot?
+            traceback.print_exc()
+            print("Bluetooth failed, connecting again")
+            
+            pi.closeBluetoothConnection(bsock)
+
+            bsock = None
 
         except Exception as e:
             traceback.print_exc()

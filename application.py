@@ -138,7 +138,6 @@ def runPi(ipaddress='10.3.141.198', port=8000):
             pi.closeBluetoothConnection(bsock)
 
             bsock = None
-            break
 
         except socket.error as serror:
             # if lost server, send "l"ost, set conn to None reconnect, send "r"eady after
@@ -149,7 +148,6 @@ def runPi(ipaddress='10.3.141.198', port=8000):
             pi.closeAllSocs(conn, recv, send)
             
             conn = None
-            break
         
         except Exception as e:
             traceback.print_exc()
