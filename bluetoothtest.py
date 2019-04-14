@@ -55,32 +55,31 @@ def bluetoothSkeleton(ipaddress='10.3.141.198', port=8000):
                 
 
             while command != 'quit':
-                send = recv = None                
-                try:
-                    found = None
-                    while found is None:
-                        success, found = pi.waitForBlueMessage(bsock, "start", timeout=4)
-                        if not success:
-                            success, found = pi.waitForBlueMessage(bsock, "lowpwr", timeout=4)
+                send = recv = None
+                found = None
+                while found is None:
+                    success, found = pi.waitForBlueMessage(bsock, "start", timeout=4)
+                    if not success:
+                        success, found = pi.waitForBlueMessage(bsock, "lowpwr", timeout=4)
+                
+                if success:
+                    if found == "lowpwr":
+                        pi.closeBluetoothConnection(bsock)
+                        bsock = None
+                        break
                     
-                    if success:
-                        if found == "lowpwr":
-                            pi.closeBluetoothConnection(bsock)
-                            bsock = None
-                            break
-                        
+                    respass = True
+                    ran = random.random()
+                    # randomize response, 10% chance for simulated output failure
+                    if ran > .7:
+                        pi.sendBlueMessage(bsock, "l")
+                        break
+                    elif ran > .35:
+                        respass = False
+                        pi.sendResBluetooth(respass, bsock)
+                    else:
                         respass = True
-                        ran = random.random()
-                        # randomize response, 10% chance for simulated output failure
-                        if ran > .7:
-                            pi.sendBlueMessage(bsock, "l")
-                            break
-                        elif ran > .35:
-                            respass = False
-                            pi.sendResBluetooth(respass, bsock)
-                        else:
-                            respass = True
-                            pi.sendResBluetooth(respass, bsock)
+                        pi.sendResBluetooth(respass, bsock)
             
                 command = input("Type anything to send images again,\n or 'quit' to quit\n")
 
