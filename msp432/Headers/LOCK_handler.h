@@ -10,7 +10,10 @@
 
 typedef enum state {IDLE, LOCK, UNLOCK , WAIT, CLEAR, ENTER } State;
 
-static char pwd[4] = "1243";
+#define True  1
+#define False 0
+
+static char pwd[4] = "1234";
 static char entered[4] = "0000";
 int button_count;
 int lock_count;

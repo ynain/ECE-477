@@ -83,7 +83,7 @@ void SysTick_Handler(void){
         toggle_yellow();
     }
 
-    /*if(overflow_count > 5 && timer_unlocking){
+    if(overflow_count > 5 && timer_unlocking){
         timer_unlocking = 0;
         green_off();
     }
@@ -95,12 +95,13 @@ void SysTick_Handler(void){
     }
     if(kp_count % 5 != 0 && timer_locking == 0 && timer_unlocking == 0){
         yellow_on();
-    }*/
+    }
 
     setLockCount(getLockCount() + 1); //This seems stupid but idk...
 
-    overflow_count++;
+    //overflow_count++;
     //GPIO_toggleOutputOnPin(GPIO_PORT_P3, GPIO_PIN7);
+    //toggle_yellow();
 }
 
 

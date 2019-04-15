@@ -11,8 +11,7 @@
 #include <Headers/HC05_driver.h>
 
 #include <Headers/LED_driver.h>
-#include <Headers/Lock_handler.h>
-
+#include "LOCK_handler.h"
 #include "msp.h"
 
 #define BUFFER_SIZE    128
@@ -29,7 +28,7 @@ typedef struct _command{
     char string[BUFFER_SIZE];
 }Command;
 
-int connected = False; // flag indicating we connected to pi
+extern int connected; // flag indicating we connected to pi
 
 
 /* UART Configuration Parameter. These are the configuration parameters to

@@ -25,9 +25,9 @@ int get_state_status(void) {
     return GPIO_getInputPinValue(GPIO_PORT_P4, GPIO_PIN1);
 }
 
-void connect_bluetooth(int* connected, int* pswdVerified, char* password){
+void connect_bluetooth(int* pswdVerified, char* password){
     char c = 0x00;
-    if(!(*connected)){
+    if(!(connected)){
 
         if(get_state_status()){
             if(!password_match){
@@ -52,29 +52,33 @@ void connect_bluetooth(int* connected, int* pswdVerified, char* password){
         if(UART_Read(EUSCI_A2_BASE, (uint8_t*)&c, 1) != 0){
             if(c == 'c' || c == 'C') {
                 printf("connected successfully\n");
-                (*connected) = True;
+                (connected) = True;
             } else printf("pi is responding, still trying to connect...\n");
         } else printf("waiting for response from pi...\n");
 
     }
 }
 
-void start_recognition(int *connected, int DPressed){
+char start_recognition(){
     char c = 0x00;
-    if(DPressed && (*connected)) {
+    if(connected) {
         MSPrintf(EUSCI_A2_BASE, " start\n", BUFFER_SIZE);
         UART_Read(EUSCI_A2_BASE, (uint8_t*)&c, 1);
         if(c == 'l' || c == 'L') {
             printf("lost connection to server...\n");
-            (*connected) = False;
+            (connected) = False;
+            return 'l';
         }
         else if(c == 'p' || c == 'P') {
             printf("face PASSED!\n");
+            return 'p';
         }
         else if(c == 'f' || c == 'F') {
             printf("face FAILED!\n");
+            return 'f';
         } else printf("unrecognized input...\n");
     }
+    return 0x00;
 }
 
 int get_password(char* password){

@@ -21,7 +21,7 @@
 
 extern int connected; //from main
 
-void Keypad_Init(void);
+void keypad_init(void);
 void GPIO_status(void);
 
 

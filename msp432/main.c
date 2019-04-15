@@ -2,7 +2,13 @@
 
 void main(void) {
 
+
+    //uint32_t mclk = CS_getMCLK();
+    //uint32_t dco  = CS_getDCOFrequency();
+    //uint32_t smclk = CS_getSMCLK();
+
     //int DPressed = True; //TODO: change later
+    connected = False;
     int pswdVerified = False;
 
     strcpy(password, "12345678");
@@ -18,22 +24,15 @@ void main(void) {
 
     leds_init();
     lock_init();
-    Keypad_Init();
-    //printf("after keypad\n");
-
-    MAP_Interrupt_enableMaster();
-
-
+    keypad_init();
     //setup_bluetooth_state();
 
 
+
     while(True) {
-
-        //if(!connected) connect_bluetooth(&connected, &pswdVerified, password);
-
-        //else start_recognition(&connected, DPressed);
+ //       connect_bluetooth(&pswdVerified, password);
+   //     if(connected) break;
     }
-
 
 }
 

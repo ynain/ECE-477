@@ -4,7 +4,7 @@
  *  Created on: Apr 8, 2019
  *      Author: 477grp2
  */
-#include <Headers/Lock_handler.h>
+#include <Headers/LOCK_handler.h>
 #include <stdio.h>
 
 void lock_init(){
@@ -16,7 +16,7 @@ void lock_init(){
 }
 
 void lock_button_pressed(char c){
-
+    char response;
     State curr_state = getLockState();
 
     //Check current state to see if the lock should ignore the button press
@@ -26,31 +26,49 @@ void lock_button_pressed(char c){
 
     // 'D' pressed -> start face recognition and go to wait state
     if(c == 'D'){
-
         setLockState(WAIT);
+        printf('D pressed\n');
+        //response = start_recognition(True);
+
+        /*
+        if(response == 'l'){
+
+        } else if(response == 'p'){
+
+        } else if(response == 'f'){
+
+        } else{
+
+        } */
     }
 
     // 'E pressed' -> check to see if the passwords match
     else if(c == 'E'){
-        if(button_count == 3 && passwords_match() == 1){
+        printf("E pressed\n");
+        if(button_count == 4 && passwords_match() == 1){
+            //printPassword();
+            printf("CORRECT!\n");
             setLockState(UNLOCK);
             setLockCount(0);
         }
         else{
+            printPassword();
+            printf("INCORRECT!\n");
             setLockState(LOCK);
             setLockCount(0);
         }
-
+        clearLock();
     }
     // Clear buffer and go to IDLE
     else if(c == 'C'){
-
+        printf("C pressed\n");
         setLockState(IDLE);
         clearLock();
     }
     // Transition from IDLE state
     else if(curr_state == IDLE){
         // In idle state, go to enter state
+        //printf("idle, c = %c\n", c);
         entered[button_count] = c;
         button_count++;
         setLockState(ENTER);
@@ -65,6 +83,7 @@ void lock_button_pressed(char c){
 
     // Already in Enter state, continue reading button presses
     else{
+        //printf("c = %c\n", c);
         entered[button_count] = c;
         button_count++;
 
@@ -86,7 +105,7 @@ void setLockState(State s){
 void printPassword(){
     int i;
     for(i = 0; i < 4; i++){
-        printf("pwd[i] = %c", pwd[i]);
+        printf("pwd[%d] = %c and entered[%d] = %c\n", i, pwd[i], i, entered[i]);
     }
 }
 

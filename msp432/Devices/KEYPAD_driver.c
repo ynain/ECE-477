@@ -6,7 +6,7 @@
  */
 #include <Headers/KEYPAD_driver.h>
 
-char keys_pressed[100]; // array holding button pressed, used for testing
+char keys_pressed[20]; // array holding button pressed, used for testing
 int period = 2*24000000; // number of ticks per period, aligns with master clock operating at 24Mhz
 int threshold = 120000;
 int last_time_pressed = -1; // last press detected time stamp
@@ -25,45 +25,39 @@ typedef struct _KeypadGPIO {
 // 6.4, 6.5, 6.6, 6.7
 
 extern KeypadGPIO ButtonKeys[8] = {
+                                   //Columns
                  {.port = GPIO_PORT_P2, .pin = GPIO_PIN4},
                  {.port = GPIO_PORT_P2, .pin = GPIO_PIN5},
                  {.port = GPIO_PORT_P2, .pin = GPIO_PIN6},
                  {.port = GPIO_PORT_P2, .pin = GPIO_PIN7},
-
+                                    //Rows
                  {.port = GPIO_PORT_P6, .pin = GPIO_PIN4},
                  {.port = GPIO_PORT_P6, .pin = GPIO_PIN5},
                  {.port = GPIO_PORT_P6, .pin = GPIO_PIN6},
-                 {.port = GPIO_PORT_P6, .pin = GPIO_PIN7},
-
-};
+                 {.port = GPIO_PORT_P6, .pin = GPIO_PIN7}};
 
 extern char Buttons [ROW][COL] = {{'1', '2', '3', 'A'},
                                   {'4', '5', '6', 'B'},
                                   {'7', '8', '9', 'C'},
                                   {'0', 'F', 'E', 'D'}};
 
-void Keypad_Init(void) {
+void keypad_init(void) {
 
     int i;
 
 
-    for (i = 0; i < ROW; i++){
+    for (i=0; i<COL; i++){
         MAP_GPIO_setAsOutputPin(ButtonKeys[i].port, ButtonKeys[i].pin);
-        //MAP_GPIO_clearInterruptFlag(ButtonKeys[i].port, ButtonKeys[i].pin);
-        //MAP_GPIO_enableInterrupt(ButtonKeys[i].port, ButtonKeys[i].pin);
         MAP_GPIO_setOutputHighOnPin(ButtonKeys[i].port, ButtonKeys[i].pin);
     }
 
-    for (i=4; i<COL+4; i++) {
-        MAP_GPIO_setAsInputPinWithPullUpResistor(ButtonKeys[i].port, ButtonKeys[i].pin);
+    for (i=4; i<ROW+4; i++) {
+        MAP_GPIO_setAsInputPinWithPullDownResistor(ButtonKeys[i].port, ButtonKeys[i].pin);
         MAP_GPIO_clearInterruptFlag(ButtonKeys[i].port, ButtonKeys[i].pin);
         MAP_GPIO_interruptEdgeSelect(ButtonKeys[i].port, ButtonKeys[i].pin, GPIO_LOW_TO_HIGH_TRANSITION);
         MAP_GPIO_enableInterrupt(ButtonKeys[i].port, ButtonKeys[i].pin);
-
     }
 
-    //MAP_Interrupt_enableInterrupt(INT_PORT2);
-    //MAP_Interrupt_enableInterrupt(INT_PORT5);
     MAP_Interrupt_enableInterrupt(INT_PORT6);
 
     printf("Keypad Init \n");
@@ -79,7 +73,7 @@ void PORT6_IRQHandler(void){
     int current_time;
     char button_pressed;
     int was_button_pressed;
-    //char password[5] = {'1', 'A', '2', 'B', 'C'};
+    char password[5] = {'1', '2', '3', '4', '5'};
     //int incorrect = 0;
     int pin_value;
     int i;
@@ -107,24 +101,24 @@ void PORT6_IRQHandler(void){
     was_button_pressed = False;
 
     // Toggle off
-    for (i=0; i< 4; i++) {
+    for (i=0; i<4; i++) {
         GPIO_setOutputLowOnPin(ButtonKeys[i].port, ButtonKeys[i].pin);
     }
 
     //Toggle individual
-    for (i=0; i< 4; i++) {
+    for (i=0; i<4; i++) {
 
-        GPIO_setOutputHighOnPin(ButtonKeys[i].port, ButtonKeys[i].pin);
+        GPIO_setOutputHighOnPin(ButtonKeys[i].port, ButtonKeys[i].pin); //toggle col
         for(j = 0; j < 4; j ++){
-            pin_value = GPIO_getInputPinValue(6, ButtonKeys[j + 4].pin);
+            pin_value = GPIO_getInputPinValue(6, ButtonKeys[j + 4].pin); //check row
 
             if(pin_value){
-                button_pressed = Buttons[j][i];
+                button_pressed = Buttons[j][i]; //todo: was [j][i]
                 was_button_pressed = True;
 
                 //send the button pressed to the lock handler
                 lock_button_pressed(button_pressed);
-
+                GPIO_setOutputLowOnPin(ButtonKeys[i].port, ButtonKeys[i].pin);
                 break;
             }
         }
@@ -133,6 +127,7 @@ void PORT6_IRQHandler(void){
             set_kp_count(get_kp_count()+1);//kp_count++;
             break;
         }
+        GPIO_setOutputLowOnPin(ButtonKeys[i].port, ButtonKeys[i].pin);
     }
 
     //Logic handled in the lock handler now
@@ -172,8 +167,9 @@ void PORT6_IRQHandler(void){
     }*/
 
 
-    //Toggle back on
-    for (i=0; i< 4; i++) {
+    //Toggle back on to be able to go back to the interrupt
+
+    for (i=0; i<4; i++) {
         GPIO_setOutputHighOnPin(ButtonKeys[i].port, ButtonKeys[i].pin);
     }
 

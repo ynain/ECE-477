@@ -12,7 +12,7 @@
 #include <ti/devices/msp432p4xx/driverlib/interrupt.h>
 #include <ti/devices/msp432p4xx/driverlib/driverlib.h>
 #include <Headers/LED_driver.h>
-#include <Headers/Lock_handler.h>
+#include <Headers/LOCK_handler.h>
 
 void Timer_Init(void);
 void set_overflow_count(int ovf_count);
