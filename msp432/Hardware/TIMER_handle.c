@@ -51,11 +51,12 @@ int get_kp_count(void){
 }
 
 void SysTick_Handler(void){
-
+    int var = getLockCount();
     enum state lock_state = getLockState();
     // For keypad
-    if(getLockCount() > 5 && lock_state == LOCK || lock_state == UNLOCK){
+    if(getLockCount() > 5 && (lock_state == LOCK || lock_state == UNLOCK)){
 
+        MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P5, GPIO_PIN2);
         setLockCount(0); //reset the lock count
         setLockState(IDLE); //go to idle
         clearLock();
@@ -70,19 +71,24 @@ void SysTick_Handler(void){
     if(lock_state == LOCK){
         yellow_off();
         red_on();
+        MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P5, GPIO_PIN2);
     }
     else if(lock_state == UNLOCK){
         yellow_off();
         green_on();
+        red_off();
+        MAP_GPIO_setOutputHighOnPin(GPIO_PORT_P5, GPIO_PIN2);
     }
     else if(lock_state == ENTER || lock_state == WAIT){
         yellow_on();
+        MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P5, GPIO_PIN2);
     }
     else if(lock_state == IDLE){
         red_off();
         toggle_yellow();
+        MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P5, GPIO_PIN2);
     }
-
+    /*
     if(overflow_count > 5 && timer_unlocking){
         timer_unlocking = 0;
         green_off();
@@ -95,7 +101,7 @@ void SysTick_Handler(void){
     }
     if(kp_count % 5 != 0 && timer_locking == 0 && timer_unlocking == 0){
         yellow_on();
-    }
+    } */
 
     setLockCount(getLockCount() + 1); //This seems stupid but idk...
 

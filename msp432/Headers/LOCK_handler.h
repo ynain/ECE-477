@@ -8,13 +8,20 @@
 #ifndef DEVICES_LOCK_HANDLER_H_
 #define DEVICES_LOCK_HANDLER_H_
 
-typedef enum state {IDLE, LOCK, UNLOCK , WAIT, CLEAR, ENTER } State;
+#include <ti/devices/msp432p4xx/driverlib/driverlib.h>
+
+typedef enum state {IDLE, LOCK, UNLOCK , WAIT, CLEAR, ENTER} State;
+
+static char SpecialChars[7] = {'A', 'B', 'C', 'D', 'E', 'F', 'O'};
 
 #define True  1
 #define False 0
 
 static char pwd[4] = "1234";
 static char entered[4] = "0000";
+static int pwd_changing = False;
+
+
 int button_count;
 int lock_count;
 
@@ -30,5 +37,10 @@ int passwords_match();
 int lockIsBusy();
 void setLockCount(int i);
 int getLockCount(void);
+
+int isPwdChanging();
+void setPwdChanging();
+void setNewPwd();
+int isSpecialChar(char c);
 
 #endif /* DEVICES_LOCK_H_ */
