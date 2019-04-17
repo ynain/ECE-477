@@ -54,7 +54,7 @@ void SysTick_Handler(void){
     int var = getLockCount();
     enum state lock_state = getLockState();
     // For keypad
-    if(getLockCount() > 5 && (lock_state == LOCK || lock_state == UNLOCK)){
+    if(getLockCount() > 10 && (lock_state == LOCK || lock_state == UNLOCK)){
 
         MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P5, GPIO_PIN2);
         setLockCount(0); //reset the lock count
