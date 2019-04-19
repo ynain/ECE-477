@@ -25,13 +25,16 @@ void main(void) {
     leds_init();
     lock_init();
     keypad_init();
-    //setup_bluetooth_state();
+    setup_bluetooth_state();
+    connect_bluetooth(password);
 
 
 
     while(True) {
  //       connect_bluetooth(&pswdVerified, password);
    //     if(connected) break;
+        if(!get_state_status()) connect_bluetooth(password);
+        else connected = True;
     }
 
 }

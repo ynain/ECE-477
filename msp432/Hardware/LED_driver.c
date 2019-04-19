@@ -16,7 +16,7 @@ typedef struct _LEDGPIO {
     uint_fast16_t pin;
 }LEDGPIO;
 
-extern LEDGPIO LEDs[3] = {{.port = GPIO_PORT_P5, .pin = GPIO_PIN4}, //green
+extern LEDGPIO LEDs[3] = {{.port = GPIO_PORT_P4, .pin = GPIO_PIN1}, //green - TODO: change to 5.4
                           {.port = GPIO_PORT_P5, .pin = GPIO_PIN5}, //red
                           {.port = GPIO_PORT_P5, .pin = GPIO_PIN6}}; //yellow
 

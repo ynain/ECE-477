@@ -26,7 +26,7 @@ int password_match;
 int get_password(char* password);
 void setup_bluetooth_state(void);
 int get_state_status(void);
-void connect_bluetooth(int* pswdVerified, char* password);
+void connect_bluetooth(char* password);
 char start_recognition(void);
 void reset_temp_buffer(void);
 

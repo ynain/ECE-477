@@ -31,19 +31,19 @@ void lock_button_pressed(char c){
     // 'D' pressed -> start face recognition and go to wait state
     if(c == 'D'){
         setLockState(WAIT);
-        printf('D pressed\n');
-        //response = start_recognition(True);
+        printf("D pressed\n");
+        response = start_recognition(True);
 
-        /*
+
         if(response == 'l'){
-
+            setLockState(IDLE);
         } else if(response == 'p'){
-
+            setLockState(UNLOCK);
         } else if(response == 'f'){
-
+            setLockState(LOCK);
         } else{
-
-        } */
+            setLockState(IDLE);
+        }
     }
 
     // 'E pressed' -> check to see if the passwords match
@@ -121,6 +121,7 @@ void lock_button_pressed(char c){
         }
 
     }
+    return;
 
 }
 

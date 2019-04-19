@@ -14,7 +14,8 @@
 
 void setup_bluetooth_state(void) {
     printf("Bluetooth state init\n");
-    MAP_GPIO_setAsInputPin(GPIO_PORT_P4, GPIO_PIN1);
+    //MAP_GPIO_setAsInputPin(GPIO_PORT_P4, GPIO_PIN1);
+    MAP_GPIO_setAsInputPin(GPIO_PORT_P5, GPIO_PIN4);
 }
 void reset_temp_buffer(void){
     int i=0;
@@ -22,10 +23,11 @@ void reset_temp_buffer(void){
 }
 
 int get_state_status(void) {
-    return GPIO_getInputPinValue(GPIO_PORT_P4, GPIO_PIN1);
+    //return GPIO_getInputPinValue(GPIO_PORT_P4, GPIO_PIN1);
+    return GPIO_getInputPinValue(GPIO_PORT_P5, GPIO_PIN4);
 }
 
-void connect_bluetooth(int* pswdVerified, char* password){
+void connect_bluetooth(char* password){
     char c = 0x00;
     if(!(connected)){
 
@@ -54,14 +56,14 @@ void connect_bluetooth(int* pswdVerified, char* password){
                 printf("connected successfully\n");
                 (connected) = True;
             } else printf("pi is responding, still trying to connect...\n");
-        } else printf("waiting for response from pi...\n");
+        } //else printf("waiting for response from pi...\n");
 
     }
 }
 
 char start_recognition(){
     char c = 0x00;
-    if(connected) {
+    if(connected && get_state_status()) {
         MSPrintf(EUSCI_A2_BASE, " start\n", BUFFER_SIZE);
         UART_Read(EUSCI_A2_BASE, (uint8_t*)&c, 1);
         if(c == 'l' || c == 'L') {
@@ -77,7 +79,7 @@ char start_recognition(){
             printf("face FAILED!\n");
             return 'f';
         } else printf("unrecognized input...\n");
-    }
+    } else printf("Pi is not connected...\n");
     return 0x00;
 }
 
