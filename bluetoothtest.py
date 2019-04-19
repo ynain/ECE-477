@@ -52,22 +52,18 @@ def bluetoothSkeleton(ipaddress='10.3.141.198', port=8000):
 
             # send ready, pretend server connected
             pi.sendBlueMessage(bsock, "c")
-                
-
-            while command != 'quit':
+            
+            received = ""
+            while 'lowpwr' not in received:
+                received = pi.getBlueMessage(bsock)
                 send = recv = None
-                found = None
-                while found is None:
-                    success, found = pi.waitForBlueMessage(bsock, "start", timeout=4)
-                    if not success:
-                        success, found = pi.waitForBlueMessage(bsock, "lowpwr", timeout=4)
                 
-                if success:
-                    if found == "lowpwr":
-                        pi.closeBluetoothConnection(bsock)
-                        bsock = None
-                        break
-                    
+                if "lowpwr" in received:
+                    pi.closeBluetoothConnection(bsock)
+                    bsock = None
+                    break
+                
+                elif "start" in received:
                     respass = True
                     ran = random.random()
                     # randomize response, 10% chance for simulated output failure
@@ -80,9 +76,7 @@ def bluetoothSkeleton(ipaddress='10.3.141.198', port=8000):
                     else:
                         respass = True
                         pi.sendResBluetooth(respass, bsock)
-            
-                command = input("Type anything to send images again,\n or 'quit' to quit\n")
-
+        
         except blt.BluetoothError as bterr:
             # if lost bluetooth, set blue to None, reconnect, wait for start/boot?
             traceback.print_exc()

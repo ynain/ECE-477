@@ -100,22 +100,17 @@ def runPi(ipaddress='10.3.141.198', port=8000):
                 pi.sendBlueMessage(bsock, "c")
                 # print("C sent")
                 
-
-            while command != 'quit':
+            received = ""
+            while 'lowpwr' not in received:
+                received = pi.getBlueMessage(bsock)
                 send = recv = None
                 
-                found = None
-                while found is None:
-                    success, found = pi.waitForBlueMessage(bsock, "start", timeout=4)
-                    if not success:
-                        success, found = pi.waitForBlueMessage(bsock, "lowpwr", timeout=4)
-                
-                if success:
-                    if found == "lowpwr":
-                        pi.closeBluetoothConnection(bsock)
-                        bsock = None
-                        break
+                if "lowpwr" in received:
+                    pi.closeBluetoothConnection(bsock)
+                    bsock = None
+                    break
 
+                elif "start" in received:
                     send, recv = pi.getWriteSocs(conn)
                     h.catchInterruptClose(conn, recv, send)
                     pi.sendFrames(connect=send)
@@ -123,11 +118,12 @@ def runPi(ipaddress='10.3.141.198', port=8000):
                     res = pi.readResults(connect=recv)
                     respass = pi.evaluateImages(res)
                     pi.sendResBluetooth(respass, bsock)
-            
-                if not send is None or not recv is None:
-                    pi.closeWriteSocs(send, recv)
-            
-                command = input("Type anything to send images again,\n or 'quit' to quit\n")
+                else:
+                    pass
+        
+            if not send is None or not recv is None:
+                pi.closeWriteSocs(send, recv)
+        
             pi.closeConnection(conn)
         
         except blt.BluetoothError as bterr:
