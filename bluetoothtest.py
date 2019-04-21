@@ -36,7 +36,7 @@ def bluetoothSkeleton(ipaddress='10.3.141.198', port=8000):
         try:
             if bsock is None:
                 # connect to Bluetooth
-                bsock = pi.getBlueConnection(mac="98:D3:71:FD:50:9E")
+                bsock = pi.getBlueConnection(mac="20:19:02:13:00:89")
 
             # wait for "boot\n"? Also, testing, HC-05 stuck in stasis
             # if here, likely lost bluetooth connection, so wait to boot up again

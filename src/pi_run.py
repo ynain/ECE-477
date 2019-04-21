@@ -121,7 +121,7 @@ def waitForBlueMessage(bconn, desired, timeout=3):
     while (not found) and (not i == timeout):
         time.sleep(.5)
         print("~~~")
-        data = getBlueMessage(bconn)
+        data = getBlueMessage(bconn).strip()
         found = desired in data
         print("`{}` vs wanted `{}`".format(data, desired))
 

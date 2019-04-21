@@ -2,7 +2,8 @@ import bluetooth
 import signal
 import sys
 import time
-BD_ADDR = "98:D3:71:FD:50:9E"
+#BD_ADDR = "98:D3:71:FD:50:9E"
+BD_ADDR = "20:19:02:13:00:89"
 
 def closeSocket(socket):
     def signal_handler(sig, frame):
