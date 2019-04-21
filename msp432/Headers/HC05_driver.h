@@ -21,7 +21,7 @@
 
 int connected; // should refer to the extern variable
 char pswrd_comp[BUFFER_SIZE];
-int password_match;
+
 
 int get_password(char* password);
 void setup_bluetooth_state(void);

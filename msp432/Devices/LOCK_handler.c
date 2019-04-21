@@ -5,6 +5,7 @@
  *      Author: 477grp2
  */
 #include <Headers/LOCK_handler.h>
+#include <Headers/HC05_driver.h>
 #include <stdio.h>
 
 void lock_init(){
@@ -32,8 +33,7 @@ void lock_button_pressed(char c){
     if(c == 'D'){
         setLockState(WAIT);
         printf("D pressed\n");
-        response = start_recognition(True);
-
+        response = start_recognition();
 
         if(response == 'l'){
             setLockState(IDLE);

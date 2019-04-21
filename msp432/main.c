@@ -31,10 +31,8 @@ void main(void) {
 
 
     while(True) {
- //       connect_bluetooth(&pswdVerified, password);
-   //     if(connected) break;
-        if(!get_state_status()) connect_bluetooth(password);
-        else connected = True;
+        connect_bluetooth(password);
+        connected = get_state_status();
     }
 
 }
