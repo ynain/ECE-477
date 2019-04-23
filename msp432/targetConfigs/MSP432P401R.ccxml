@@ -9,6 +9,11 @@
                 <choice Name="SWD Mode - Aux COM port is target TDO pin" value="nothing"/>
             </property>
             <property Type="choicelist" Value="0" id="The JTAG TCLK Frequency (MHz)"/>
+            <property Type="choicelist" Value="0" id="Power Selection">
+                <choice Name="Probe supplied power" value="1">
+                    <property Type="stringfield" Value="3.3" id="Voltage Level"/>
+                </choice>
+            </property>
             <platform XML_version="1.2" id="platform_0">
                 <instance XML_version="1.2" desc="MSP432P401R" href="devices/msp432p401r.xml" id="MSP432P401R" xml="msp432p401r.xml" xmlpath="devices"/>
             </platform>

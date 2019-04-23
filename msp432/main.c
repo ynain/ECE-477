@@ -29,7 +29,6 @@ void main(void) {
     connect_bluetooth(password);
 
 
-
     while(True) {
         connect_bluetooth(password);
         connected = get_state_status();

@@ -17,8 +17,8 @@ typedef struct _LEDGPIO {
 }LEDGPIO;
 
 extern LEDGPIO LEDs[3] = {{.port = GPIO_PORT_P5, .pin = GPIO_PIN6}, //green
-                          {.port = GPIO_PORT_P5, .pin = GPIO_PIN5}, //red
-                          {.port = GPIO_PORT_P5, .pin = GPIO_PIN4}}; //yellow
+                          {.port = GPIO_PORT_P5, .pin = GPIO_PIN4}, //red
+                          {.port = GPIO_PORT_P5, .pin = GPIO_PIN5}}; //yellow
 
 
 void leds_init(){

@@ -29,35 +29,28 @@ int get_state_status(void) {
 
 void connect_bluetooth(char* password){
     char c = 0x00;
-    if(!connected){
-
-        if(get_state_status()){
-            //if(pswVerified) return;
-            if(True){ //was else before
-                if(!get_password(password)) {
-                    printf("wrong password\n");
-                    reset_temp_buffer();
-                    return;
-                } else {
-                    reset_temp_buffer();
-                }
-            }
-            reset_temp_buffer();
-            printf("correct password\n");
-            printf("not connected yet\n");
-            MSPrintf(EUSCI_A2_BASE, "boot\n", BUFFER_SIZE);
-            printf("sending boot signal...\n");
+    if(connected && get_state_status()) return;
+    if(get_state_status()){
+        if(!get_password(password)) {
+            printf("wrong password\n");
+            return;
         }
+        reset_temp_buffer();
 
-
-        if(UART_Read(EUSCI_A2_BASE, (uint8_t*)&c, 1) != 0){
-            if(c == 'c' || c == 'C') {
-                printf("connected successfully\n");
-                (connected) = True;
-            } else printf("pi is responding, still trying to connect...\n");
-        } //else printf("waiting for response from pi...\n");
-
+        printf("correct password\n");
+        MSPrintf(EUSCI_A2_BASE, "boot\n", BUFFER_SIZE);
+        printf("sending boot signal...\n");
     }
+
+
+    if(UART_Read(EUSCI_A2_BASE, (uint8_t*)&c, 1) != 0){
+        if(c == 'c' || c == 'C') {
+            printf("connected successfully\n");
+            (connected) = True;
+        } else printf("pi is responding, still trying to connect...\n");
+    }
+
+
 }
 
 char start_recognition(){
@@ -78,7 +71,8 @@ char start_recognition(){
             printf("face FAILED!\n");
             return 'f';
         } else printf("unrecognized input...\n");
-    } else printf("Pi is not connected...\n");
+    } else if(!connected) printf("Pi is not connected to server...\n");
+    else printf("PI: No connection!");
     return 0x00;
 }
 
@@ -90,7 +84,6 @@ int get_password(char* password){
     MSPgets(EUSCI_A2_BASE, pswrd_comp, BUFFER_SIZE);
     if((numComp = strncmp(pswrd_comp, password, strlen(pswrd_comp) - 2)) == 0) {
         reset_temp_buffer();
-        pswVerified = True;
         return True;
     }
     else {
