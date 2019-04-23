@@ -27,7 +27,7 @@ import bluetooth as blt
 import src.helpers as h
 
 
-def bluetoothSkeleton(ipaddress='10.3.141.198', port=8000):
+def bluetoothSkeleton(ipaddress='10.3.141.198', port=8000, MAC="98:D3:71:FD:50:9E"):
     print("Pi Pie Phi guy running")
 
     command = ''
@@ -36,7 +36,7 @@ def bluetoothSkeleton(ipaddress='10.3.141.198', port=8000):
         try:
             if bsock is None:
                 # connect to Bluetooth
-                bsock = pi.getBlueConnection(mac="98:D3:71:FD:50:9E")
+                bsock = pi.getBlueConnection(mac=MAC)
 
             # wait for "boot\n"? Also, testing, HC-05 stuck in stasis
             # if here, likely lost bluetooth connection, so wait to boot up again
@@ -49,9 +49,12 @@ def bluetoothSkeleton(ipaddress='10.3.141.198', port=8000):
                     pi.sendBlueMessage(bsock, pswd)
 
                 received = pi.getBlueMessage(bsock)
+            print("Boot received")
 
+            print("Connecting...")
             # send ready, pretend server connected
             pi.sendBlueMessage(bsock, "c")
+            print("c sent")
             
             received = ""
             while 'lowpwr' not in received:
