@@ -162,4 +162,4 @@ if __name__ == "__main__":
         runPi(ipaddress='10.42.0.1')
         # runPi(ipaddress='10.186.129.210')
     else:
-        runComputer(rot=True)
+        runComputer()
