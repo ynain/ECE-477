@@ -98,7 +98,7 @@ def runPi(ipaddress='10.3.141.198', port=8000):
                 conn = pi.getServerConnection(ipaddress=ipaddress)
                 # send ready after
                 pi.sendBlueMessage(bsock, "c")
-                # print("C sent")
+                print("c sent")
                 
             received = ""
             while 'lowpwr' not in received:
@@ -118,8 +118,9 @@ def runPi(ipaddress='10.3.141.198', port=8000):
                     res = pi.readResults(connect=recv)
                     respass = pi.evaluateImages(res)
                     pi.sendResBluetooth(respass, bsock)
+                    print("{} sent".format(respass))
                 else:
-                    pass
+                    continue
         
             if not send is None or not recv is None:
                 pi.closeWriteSocs(send, recv)
@@ -139,6 +140,7 @@ def runPi(ipaddress='10.3.141.198', port=8000):
             # if lost server, send "l"ost, set conn to None reconnect, send "r"eady after
             traceback.print_exc()
             pi.sendBlueMessage(bsock, "l")
+            print("taking an l")
             
             # try to healthily close everything
             pi.closeAllSocs(conn, recv, send)
