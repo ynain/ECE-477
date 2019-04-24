@@ -2,11 +2,11 @@
 #define HARDWARE_UART_DRIVER_H_
 
 
-#include <ti/devices/msp432p4xx/driverlib/rom.h>
-#include <ti/devices/msp432p4xx/driverlib/rom_map.h>
-#include <ti/devices/msp432p4xx/driverlib/interrupt.h>
-#include <ti/devices/msp432p4xx/driverlib/uart.h>
-#include <ti/devices/msp432p4xx/driverlib/gpio.h>
+#include <C:/ti/simplelink_msp432p4_sdk_2_40_00_10/source/ti/devices/msp432p4xx/driverlib/rom.h>
+#include <C:/ti/simplelink_msp432p4_sdk_2_40_00_10/source/ti/devices/msp432p4xx/driverlib/rom_map.h>
+#include <C:/ti/simplelink_msp432p4_sdk_2_40_00_10/source/ti/devices/msp432p4xx/driverlib/interrupt.h>
+#include <C:/ti/simplelink_msp432p4_sdk_2_40_00_10/source/ti/devices/msp432p4xx/driverlib/uart.h>
+#include <C:/ti/simplelink_msp432p4_sdk_2_40_00_10/source/ti/devices/msp432p4xx/driverlib/gpio.h>
 
 #define UARTA0_BUFFERSIZE 2048
 #define UARTA2_BUFFERSIZE 2048

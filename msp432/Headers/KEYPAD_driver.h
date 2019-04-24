@@ -4,9 +4,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ti/devices/msp432p4xx/driverlib/gpio.h>
-#include <ti/devices/msp432p4xx/driverlib/interrupt.h>
-#include <ti/devices/msp432p4xx/driverlib/driverlib.h>
+#include <C:/ti/simplelink_msp432p4_sdk_2_40_00_10/source/ti/devices/msp432p4xx/driverlib/gpio.h>
+#include <C:/ti/simplelink_msp432p4_sdk_2_40_00_10/source/ti/devices/msp432p4xx/driverlib/interrupt.h>
+#include <C:/ti/simplelink_msp432p4_sdk_2_40_00_10/source/ti/devices/msp432p4xx/driverlib/driverlib.h>
 //
 #include <Headers/TIMER_handle.h>
 #include <Headers/HC05_driver.h>

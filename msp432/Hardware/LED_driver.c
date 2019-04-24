@@ -27,10 +27,10 @@ void leds_init(){
     MAP_GPIO_setAsOutputPin(LEDs[RED].port, LEDs[RED].pin); // red
     MAP_GPIO_setAsOutputPin(LEDs[YELLOW].port, LEDs[YELLOW].pin); // yellow
 
-    yellow_on();
+    yellow_off();
     green_off();
     red_off();
-    printf("LEDs init\n");
+    //printf("LEDs init\n");
 
 }
 

@@ -60,7 +60,7 @@ void keypad_init(void) {
 
     MAP_Interrupt_enableInterrupt(INT_PORT6);
 
-    printf("Keypad Init \n");
+    //printf("Keypad Init \n");
     return;
 
 }

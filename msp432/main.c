@@ -1,7 +1,7 @@
 #include <Headers/main.h>
 
 void main(void) {
-
+    int i,j;
 
     //uint32_t mclk = CS_getMCLK();
     //uint32_t dco  = CS_getDCOFrequency();
@@ -19,8 +19,8 @@ void main(void) {
     CS_Init();
     Timer_Init();
     //Initialize Hardware required for the HC-05
-
     UART_Init(EUSCI_A2_BASE, UART2Config);
+    for(i=0; i<3*24000000;i++) j=i;
 
     leds_init();
     lock_init();
@@ -31,7 +31,7 @@ void main(void) {
 
     while(True) {
         connect_bluetooth(password);
-        connected = get_state_status();
+        //connected = get_state_status();
     }
 
 }

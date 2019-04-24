@@ -8,7 +8,8 @@
 #ifndef DEVICES_LOCK_HANDLER_H_
 #define DEVICES_LOCK_HANDLER_H_
 
-#include <ti/devices/msp432p4xx/driverlib/driverlib.h>
+#include <C:/ti/simplelink_msp432p4_sdk_2_40_00_10/source/ti/devices/msp432p4xx/driverlib/driverlib.h>
+#include <Headers/LED_driver.h>
 
 typedef enum state {IDLE, LOCK, UNLOCK , WAIT, CLEAR, ENTER} State;
 
@@ -23,7 +24,7 @@ static int pwd_changing = False;
 
 
 int button_count;
-int lock_count;
+static int lock_count;
 
 State state;
 

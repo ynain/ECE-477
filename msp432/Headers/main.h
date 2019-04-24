@@ -1,7 +1,7 @@
 #ifndef MAIN_H_
 #define MAIN_H_
 
-#include <ti/devices/msp432p4xx/driverlib/driverlib.h>
+#include <C:/ti/simplelink_msp432p4_sdk_2_40_00_10/source/ti/devices/msp432p4xx/driverlib/driverlib.h>
 #include <Headers/CS_Driver.h>
 #include <Headers/UART_Driver.h>
 #include <Headers/timer.h>

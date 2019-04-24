@@ -162,7 +162,7 @@ void EUSCIA2_IRQHandler(void)
 {
     uint8_t c;
     uint32_t status = MAP_UART_getEnabledInterruptStatus(EUSCI_A2_BASE);
-    MAP_UART_clearInterruptFlag(EUSCI_A2_BASE, status);
+    //MAP_UART_clearInterruptFlag(EUSCI_A2_BASE, status);
 
     if(status & EUSCI_A_UART_RECEIVE_INTERRUPT)
     {

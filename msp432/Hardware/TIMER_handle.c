@@ -6,11 +6,13 @@
  */
 #include <Headers/TIMER_handle.h>
 #include <Headers/KEYPAD_driver.h>
-
+#include <Headers/MSPIO.h>
 static int overflow_count = 0; // count the number of SysTick overflows that occur between presses
 static int kp_count = 0; // count the key presses
 static int timer_locking = 0;
 static int timer_unlocking = 0;
+
+static char buff[5];
 
 void Timer_Init(void){
 
@@ -18,7 +20,7 @@ void Timer_Init(void){
     MAP_SysTick_setPeriod(PERIOD);
     MAP_SysTick_enableInterrupt();
 
-    printf("Timer init\n");
+    //printf("Timer init\n");
 
 }
 
@@ -53,61 +55,72 @@ int get_kp_count(void){
 void SysTick_Handler(void){
     int var = getLockCount();
     enum state lock_state = getLockState();
+    char c;
     // For keypad
-    if(getLockCount() > 10 && (lock_state == LOCK || lock_state == UNLOCK)){
+/*
+    if(getLockCount() > 10){
+        toggle_red();
+        toggle_yellow();
+        toggle_green();
+    } */
 
+    if(getLockCount() > 10){
+        green_off();
+        setLockState(IDLE);
+    }
+
+    if(getLockCount() > 5 && (lock_state == LOCK || lock_state == UNLOCK)){
+        green_off();
         MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P5, GPIO_PIN2);
         setLockCount(0); //reset the lock count
         setLockState(IDLE); //go to idle
         clearLock();
         if(lock_state == LOCK){
-            red_off();
+            //red_off();
         }
         else{
-            green_off();
+            //green_off();
         }
     }
 
     if(lock_state == LOCK){
-        yellow_off();
-        red_on();
+        //yellow_off();
+        //red_on();
         MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P5, GPIO_PIN2);
     }
-    else if(lock_state == UNLOCK){
-        yellow_off();
+    else if(lock_state == WAIT){
+        c = 0x00;
+        //green_off();
         green_on();
-        red_off();
+        MSPrintf(EUSCI_A2_BASE, "wait\n", BUFFER_SIZE);
+        if(UART_Read(EUSCI_A2_BASE, (uint8_t*)&c, 1) !=0){
+            setLockState(UNLOCK);
+        }
+        //setLockCount(0);
+
+        /*
+        if(c == 'p')                                 setLockState(UNLOCK);
+        else if(c == 'f' || getLockCount() > 10)    setLockState(LOCK);
+        else if(c == 'l')                            setLockState(IDLE);
+        else setLockState(WAIT);*/
+
+    }
+    else if(lock_state == UNLOCK){
         MAP_GPIO_setOutputHighOnPin(GPIO_PORT_P5, GPIO_PIN2);
     }
     else if(lock_state == ENTER || lock_state == WAIT){
-        yellow_on();
+        green_off();
         MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P5, GPIO_PIN2);
     }
     else if(lock_state == IDLE){
-        red_off();
-        toggle_yellow();
+        green_off();
         MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P5, GPIO_PIN2);
     }
-    /*
-    if(overflow_count > 5 && timer_unlocking){
-        timer_unlocking = 0;
-        green_off();
-    }
-    if(kp_count % 5 == 0 && timer_locking == 1 || timer_unlocking == 1){
-        yellow_off();
-    }
-    if(kp_count % 5 == 0 && timer_locking == 0 && timer_unlocking == 0){
-        toggle_yellow();
-    }
-    if(kp_count % 5 != 0 && timer_locking == 0 && timer_unlocking == 0){
-        yellow_on();
-    } */
+
 
     setLockCount(getLockCount() + 1); //This seems stupid but idk...
+    set_hc05_count(get_hc05_count() + 1);
 
-    //overflow_count++;
-    //GPIO_toggleOutputOnPin(GPIO_PORT_P3, GPIO_PIN7);
-    //toggle_yellow();
 }
 
 
