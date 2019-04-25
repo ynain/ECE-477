@@ -22,40 +22,56 @@ void lock_init(){
 void lock_button_pressed(char c){
     char c_in = 0x00;
     char response;
+    int x = 0;
     State curr_state = getLockState();
     int pwd_change = isPwdChanging();
 
     //Check current state to see if the lock should ignore the button press
     if(curr_state == WAIT || curr_state == LOCK || curr_state == UNLOCK){
+        red_off();
          return;
     }
 
     // 'D' pressed -> start face recognition and go to wait state
     if(c == 'D'){
-        //MAP_GPIO_setOutputHighOnPin(GPIO_PORT_P5, GPIO_PIN2);
 
-        //printf("D pressed\n");
-
-        if(get_state_status()){
             setLockState(WAIT);
             //response = start_recognition();
-            MSPrintf(EUSCI_A2_BASE, " start\n", BUFFER_SIZE);
             setLockCount(0);
-        }
+            if(getHC05State() == READY) {
+                 green_on();
+                 MSPrintf(EUSCI_A2_BASE, "start\n", BUFFER_SIZE);
+                 x = 0;
 
-        /*if(response == 'l'){
-            setLockState(IDLE);
-        } else if(response == 'p'){
-            setLockState(UNLOCK);
-        } else if(response == 'f'){
-            setLockState(LOCK);
-        } else{
-            setLockState(IDLE);
-        }*/
+                 while (x < 1 && getLockCount() < 20) {
+                     x = getUARTRecieved();
+                 }
+                 if(getLockCount() >= 20){
+                     setLockState(IDLE);
+                 } else{
+                     UART_Read(EUSCI_A2_BASE,(uint8_t*)&c, 1);
+
+                     if(c == 'p')       {
+                         setLockState(UNLOCK);
+                         green_on();
+                     }
+                     else if(c == 'f')  {
+                         setLockState(LOCK);
+                     }
+                     else if(c == 'l')  {
+                         setLockState(IDLE);
+                     }
+                     setUARTRecieved(0);
+                 }
+
+            }
+
+
     }
 
     // 'E pressed' -> check to see if the passwords match
     else if(c == 'E'){
+        red_off();
         printf("E pressed\n");
         if(button_count == 4 && passwords_match() == 1){
             //printPassword();
@@ -78,6 +94,7 @@ void lock_button_pressed(char c){
         clearLock();
     }
     else if(c == 'F'){
+        red_off();
         //printf("F pressed\n");
         if(button_count == 4 && passwords_match() == 1){
            //printPassword();
@@ -97,12 +114,14 @@ void lock_button_pressed(char c){
     }
     // Clear buffer and go to IDLE
     else if(c == 'C'){
+        red_off();
        // printf("C pressed\n");
         setLockState(IDLE);
         clearLock();
     }
     // Transition from IDLE state
     else if(curr_state == IDLE){
+        red_off();
         // In idle state, go to enter state
         //printf("idle, c = %c\n", c);
         entered[button_count] = c;
@@ -112,13 +131,14 @@ void lock_button_pressed(char c){
 
     //Too many buttons pressed before enter key
     else if(curr_state == ENTER && button_count == 4){
-
+        red_off();
         setLockState(LOCK);
         setLockCount(0);
     }
 
     // Already in Enter state, continue reading button presses
     else{
+        red_off();
         //printf("c = %c\n", c);
         if(isSpecialChar(c) == 0){
             entered[button_count] = c;

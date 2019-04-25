@@ -110,7 +110,10 @@ void PORT6_IRQHandler(void){
                 was_button_pressed = True;
 
                 //send the button pressed to the lock handler
-                lock_button_pressed(button_pressed);
+                //lock_button_pressed(button_pressed);
+                set_key_was_pressed(1);
+                set_last_key_pressed(button_pressed);
+
                 GPIO_setOutputLowOnPin(ButtonKeys[i].port, ButtonKeys[i].pin);
                 break;
             }
@@ -155,6 +158,18 @@ void GPIO_status(void) {
         GPIO_setOutputLowOnPin(ButtonKeys[i].port, ButtonKeys[i].pin);
     }
 
+}
+char get_last_key_pressed(){
+    return last_key;
+}
+void set_last_key_pressed(char key){
+    last_key = key;
+}
+int was_key_pressed(){
+    return was_key_pressed_flag;
+}
+void set_key_was_pressed(int p){
+    was_key_pressed_flag = p;
 }
 
 

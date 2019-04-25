@@ -7,6 +7,7 @@
 #include <Headers/TIMER_handle.h>
 #include <Headers/KEYPAD_driver.h>
 #include <Headers/MSPIO.h>
+#include <Headers/HC05_driver.h>
 static int overflow_count = 0; // count the number of SysTick overflows that occur between presses
 static int kp_count = 0; // count the key presses
 static int timer_locking = 0;
@@ -56,6 +57,7 @@ void SysTick_Handler(void){
     int var = getLockCount();
     enum state lock_state = getLockState();
     char c;
+    int x;
     // For keypad
 /*
     if(getLockCount() > 10){
@@ -89,20 +91,8 @@ void SysTick_Handler(void){
         MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P5, GPIO_PIN2);
     }
     else if(lock_state == WAIT){
-        c = 0x00;
-        //green_off();
-        green_on();
-        MSPrintf(EUSCI_A2_BASE, "wait\n", BUFFER_SIZE);
-        if(UART_Read(EUSCI_A2_BASE, (uint8_t*)&c, 1) !=0){
-            setLockState(UNLOCK);
-        }
-        //setLockCount(0);
 
-        /*
-        if(c == 'p')                                 setLockState(UNLOCK);
-        else if(c == 'f' || getLockCount() > 10)    setLockState(LOCK);
-        else if(c == 'l')                            setLockState(IDLE);
-        else setLockState(WAIT);*/
+        //green_off();
 
     }
     else if(lock_state == UNLOCK){

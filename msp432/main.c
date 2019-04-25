@@ -1,7 +1,7 @@
 #include <Headers/main.h>
 
 void main(void) {
-    int i,j;
+
 
     //uint32_t mclk = CS_getMCLK();
     //uint32_t dco  = CS_getDCOFrequency();
@@ -11,7 +11,7 @@ void main(void) {
     connected = False;
     int pswdVerified = False;
 
-    strcpy(password, "12345678");
+    strcpy(password, "twild477");
 
     MAP_WDT_A_holdTimer();
 
@@ -20,18 +20,30 @@ void main(void) {
     Timer_Init();
     //Initialize Hardware required for the HC-05
     UART_Init(EUSCI_A2_BASE, UART2Config);
-    for(i=0; i<3*24000000;i++) j=i;
+    //for(int i=0; i<3*24000000;i++);
 
     leds_init();
     lock_init();
     keypad_init();
     setup_bluetooth_state();
-    connect_bluetooth(password);
 
+    char c;
+    int l;
 
-    while(True) {
+    while(1) {
         connect_bluetooth(password);
+        //connect_bluetooth(password);
+        //MSPrintf(EUSCI_A2_BASE, "pswd\n", BUFFER_SIZE);
         //connected = get_state_status();
+
+        l = getLockCount();
+        if(was_key_pressed()){
+            c = get_last_key_pressed();
+            set_key_was_pressed(0);
+            lock_button_pressed(c);
+        }
+
+
     }
 
 }

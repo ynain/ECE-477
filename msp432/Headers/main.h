@@ -18,6 +18,7 @@
 #define True             1
 #define False            0
 
+
 /*Data Buffer*/
 char BufferRX[BUFFER_SIZE];
 char BufferTX[BUFFER_SIZE];
@@ -59,8 +60,8 @@ eUSCI_UART_Config UART0Config =
 eUSCI_UART_Config UART2Config =
 {
      EUSCI_A_UART_CLOCKSOURCE_SMCLK,
-     156,
-     4,
+     78,
+     2,
      0,
      EUSCI_A_UART_NO_PARITY,
      EUSCI_A_UART_LSB_FIRST,

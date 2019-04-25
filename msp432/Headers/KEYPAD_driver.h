@@ -21,8 +21,16 @@
 
 extern int connected; //from main
 
+static char last_key;
+
+static int was_key_pressed_flag;
+
 void keypad_init(void);
 void GPIO_status(void);
 
+char get_last_key_pressed();
+int was_key_pressed();
+void set_last_key_pressed(char key);
+void set_key_was_pressed(int p);
 
 #endif // HARDWARE_KEYPAD_DRIVER_H_
