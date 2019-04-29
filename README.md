@@ -2,6 +2,11 @@ View this project on [CADLAB.io](https://cadlab.io/project/1601).
 
 # ECE-477
 
+The Code Composer Studio project folder is msp432/
+
+application.py, bluetoothtest.py, src/pi_run.py, src/comp_run.py, and src/helpers.py and their dependencies should be the main files used in this project, and are the recommended ones for inspection, if you're looking to skip over test files and folders we used while figuring things out.
+src/alt_trials/ should hold the files necessary for user registration and some example strucutre for what was used for this semester's project.
+
 This project relies on Python 3.5 or above to work properly. Furthermore, DLIB, OpenCV, face_recognition, and several other PIP packages are required for download before this will run properly. Additional packages are required for a Raspberry Pi. For our conventience during initial testing, a discovered wheel build for Tensorflow on a Raspberry Pi was added for easy distrobution among our prototyping devices. It was offered up on a forum that we came across as we tried to build Tensorflow on a Pi from source.
 
 Running application.py should detect whether on a Pi or Ubuntu, and this project isn't promised to work outside of those two environments. This also requires an MSP432 to be flashed with the code in  the msp432 Code Composer Studio project folder, and the EAGLE folder has some of our EAGLE source files, though at the writing of this document it is unknown if they're the latest versions.
