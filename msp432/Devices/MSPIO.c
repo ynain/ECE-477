@@ -1,4 +1,4 @@
-#include "MSPIO.h"
+#include <Headers/MSPIO.h>
 
 void PrintChar(uint32_t UART, char c)
 {
@@ -102,11 +102,12 @@ int MSPgets(uint32_t UART, char *b, int size)
     char c;
     uint32_t i = 0;
 
+
     while(1)
     {
-        if(UART_Read(UART, (uint8_t*)&c, 1) != 0)
-        {
+        if(UART_Read(UART, (uint8_t*)&c, 1) != 0){
            /*put a '\n' and '\r' if it fits on the buffer*/
+            //printf("c = %c\n", c);
            if(c == '\n' || c == '\r')
            {
                if(i + 3 > size)
@@ -138,7 +139,7 @@ int MSPgets(uint32_t UART, char *b, int size)
                    return size + 1;
                }
            }
-        }
+        } //else printf("not getting anything from bluetooth\n");
     }
 }
 

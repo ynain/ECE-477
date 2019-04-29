@@ -1,4 +1,4 @@
-#include "UART_Driver.h"
+#include <Headers/UART_Driver.h>
 
 /*UARTA0 Ring Buffer Global Variables*/
 volatile uint8_t UARTA0Data[UARTA0_BUFFERSIZE];
@@ -23,6 +23,7 @@ volatile uint32_t UARTA2WriteIndex;
 
 void UART_Init(uint32_t UART, eUSCI_UART_Config UARTConfig)
 {
+    setUARTRecieved(0);
     switch(UART)
     {
     case EUSCI_A0_BASE:
@@ -92,7 +93,6 @@ uint32_t UART_Read(uint32_t UART, uint8_t *Data, uint32_t Size)
                 c = UARTA2Data[UARTA2ReadIndex];
                 UARTA2_ADVANCE_READ_INDEX;
 
-                //printf("reading: %c\n", c);
                 Data[i] = c;
             }
         }
@@ -135,6 +135,7 @@ void UART_Flush(uint32_t UART)
 void EUSCIA0_IRQHandler(void)
 {
     uint8_t c;
+
     uint32_t status = MAP_UART_getEnabledInterruptStatus(EUSCI_A0_BASE);
 
     MAP_UART_clearInterruptFlag(EUSCI_A0_BASE, status);
@@ -162,7 +163,8 @@ void EUSCIA2_IRQHandler(void)
 {
     uint8_t c;
     uint32_t status = MAP_UART_getEnabledInterruptStatus(EUSCI_A2_BASE);
-    MAP_UART_clearInterruptFlag(EUSCI_A2_BASE, status);
+    //MAP_UART_clearInterruptFlag(EUSCI_A2_BASE, status);
+    //uint8_t* temp = UARTA2Data;
 
     if(status & EUSCI_A_UART_RECEIVE_INTERRUPT)
     {
@@ -171,11 +173,22 @@ void EUSCIA2_IRQHandler(void)
         if(UARTA2_BUFFER_FULL)
         {
             /*TODO: Buffer Overflow, add handler here*/
+            UART_Flush(EUSCI_A2_BASE);
         }
         else
         {
             UARTA2Data[UARTA2WriteIndex] = c;
+            //printf("in interrupt c = %c\n", c);
             UARTA2_ADVANCE_WRITE_INDEX;
+            setUARTRecieved(getUARTRecieved() + 1);
         }
     }
+
 }
+int getUARTRecieved(void){
+    return recieved;
+}
+void setUARTRecieved(int count){
+    recieved = count;
+}
+
