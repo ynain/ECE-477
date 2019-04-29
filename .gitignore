@@ -22,6 +22,7 @@ runface
 # virtual environment and VS code items #
 face
 nonet
+testphotos
 .vscode
 
 # Python files #

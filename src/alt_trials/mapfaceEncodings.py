@@ -40,7 +40,11 @@ def getFaceEncodings(folderName="input_images"):
 
 def writeFaceEncodings(encoded, outName="known_faces"):
     for person in encoded:
-        encodefile = os.path.join(outName, person, "encodings_"+person+"")
+        encodefolder = os.path.join(outName, person)
+        encodefile = os.path.join(encodefolder, "encodings_"+person+"")
+
+        if not os.path.isdir(encodefolder):
+            os.makedirs(encodefolder)
         
         np.savez_compressed(encodefile, encoded[person])
 

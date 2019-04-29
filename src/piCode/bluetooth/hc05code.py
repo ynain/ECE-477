@@ -58,9 +58,19 @@ def sendAndReceive(message, looped=True):
         if msg[-1] == '\n':
             break
 
+    msg = "".join(msg.splitlines())
     print(msg)
-    if msg.strip() == 'boot':
+
+
+    if message in ['l', 'p', 'f']:
+        sock.send(message)
+        print("sent " + message)
+        return
+    
+    if msg.strip().find('start') != -1 or msg.strip().find('boot') != -1:
         sock.send('c')
+        print('sent c')
+        return
 
     '''
     sock.send(message)
