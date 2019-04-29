@@ -48,7 +48,9 @@ def getCropFaces(folderName="input_images", outName="known_faces"):
                         # Only works with image extensions of 3 letters!
                         name = image[:-4] + "_{}_{}".format(top, left) + image[-4:]
 
+                        # res[person].append((name, frame))
                         res[person].append((name, frame[top:bottom, left:right]))
+
                         """
                         cv2.imshow(person, res[person][-1][:, :, ::-1]) # color adjust for OpenCV
                         cv2.waitKey(300)
